@@ -213,7 +213,18 @@
             $aRow['FirstName']   	= $emp_info_temp_arr['FirstName'][0]; 
             $aRow['MiddleName']    	= $emp_info_temp_arr['MiddleName'][0]; 
         }
-       		
+		
+		/**
+		 * Add account number
+		 * 08-06-2024
+		 * -JD
+		 */
+		$accountNumberArray = get_account_no($aRow['employee_no']);
+        if( count($accountNumberArray) > 0 ){
+            $aRow['emp_no']    		= $accountNumberArray[0]['emp_no']; 
+            $aRow['account_no']    	= $accountNumberArray[0]['account_no']; 
+        }
+
         $row[] = $aRow['employee_no'];
         $row[] = $aRow['LastName'].', '.$aRow['FirstName'].' ('.$aRow['MiddleName'].')';
         $row[] = $aRow['personal_exemption'];
@@ -222,6 +233,7 @@
         $row[] = $aRow['ctpa'];
         $row[] = $aRow['socio_eco_allow'];
         $row[] = $aRow['allowance'];
+        $row[] = $aRow['account_no'];
         $row[] 	= '<center> <button type="button" class="btn btn-primary fa fa-edit" id="btn_edit" data-id="'.$aRow['id'].'"> Edit</button>';
 		array_push($output['aaData'],$row);
 	}
@@ -249,6 +261,35 @@
         }
         $return['ctr']  = $ctr;
         return $return;
+    }
+
+	/**
+	 * Add account number
+	 * 08-06-2024
+	 * -JD
+	 */
+	function get_account_no($EmpNo){
+        require_once ('../../class/payroll_oop.php');
+        $return             = $_POST;
+        $result             = '';
+        $array_fields       = array('a.*');
+        $table              = 'tbl_account_no a';
+        $joins              = '';
+        $sql_where          = 'WHERE a.emp_no="'.$EmpNo.'"';
+        $sql_order          = '';
+        $sql_limit          = '';
+        $result             = PAYROLL::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
+		// echo json_encode(mysqli_fetch_array($result));
+		$tempoArray = array();
+        while($row = mysqli_fetch_array($result)){
+			$innerArray = array(
+				'emp_no' => $row['emp_no'],
+				'account_no' => $row['account_no'],
+			);
+			array_push($tempoArray, $innerArray);
+        }
+
+        return $tempoArray;
     }
 
 	

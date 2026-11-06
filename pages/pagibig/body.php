@@ -31,7 +31,8 @@
 									<div class="col-sm-3">
 										<button class="btn btn-primary fa" id="btnImportData" data-toggle="modal"><i class="fa fa-plus"></i> Import Data</button><br><br>
 									</div>
-									<div class="col-sm-9">
+									<div class="col-sm-9" style="display: flex; justify-content: flex-end;">
+									<button class="btn btn-danger" style="margin-right: 5px" id="btnDelete"><i class="fa fa-minus"></i> Delete All</button>
 										<button class="btn btn-success fa pull-right" id="btnLeaves" data-toggle="modal" data-target="#mdlTaxes"><i class="fa fa-plus"></i> New</button><br><br>
 									</div>
 								</div>
@@ -41,6 +42,7 @@
 											<th style="width: 20%;">Employee Number</th> 
 											<th style="width: 20%;">Salary Loan Amount</th>
 											<th style="width: 20%;">Calamity Loan Amount</th>
+											<th style="width: 20%;">Safe Loan Amount</th>
 											<th style="width: 10%;">Action</th>
 										</thead>
 									</table>
@@ -257,7 +259,7 @@
 	<div class="modal-dialog" style="width: 25% !important; min-width: 25% !important;">
 		<div class="modal-content">
 			<div class="modal-header" style="overflow-y:auto;">
-				Pagibig Loan Info
+				Loan Info
 			</div>
 			<form id="frm_pagibig_loan_create">
 				<div class="modal-body" style="overflow-y:auto;">
@@ -875,6 +877,24 @@
 		function deductBalanceByPrincipal(principalAmount, amortizationLoanAmount, multiplier) {
 			return (parseFloat(principalAmount) - (parseFloat(amortizationLoanAmount) * multiplier)).toFixed(2);
 		}
+		// function checkIfScheduleOfPaymentPosted(schedule_of_payment){
+		// 	let array_data = {
+		// 		'action' : 'is_schedule_of_payment_posted',
+		// 		'schedule_of_payment': schedule_of_payment
+		// 	};
+		// 	let data = $.param(array_data);
+		// 	console.log('data ', data);
+		// 	$.ajax({
+		// 		type: "POST",
+		// 		url: handler_pagibig,
+		// 		data: data,
+		// 		dataType: "json",
+		// 		success: function (response) {
+		// 			console.log('response payrollInfo', response['payrollInfo']);
+		// 		}
+		// 	});
+		// }
+
 		function generateScheduleOfPayment(){
 			let startDate = $('#start_date').val(); // 2024-01-30
 			let monthsToPay = $('#months_to_pay').val();
@@ -906,12 +926,13 @@
 				 */
 				scheduleOfPaymentArray = []; // this will clear scheduleOfPaymentArray values to avoid duplicate values before appending the new data
 				for(let i = 0; i < monthsToPayByFrequency; i++){
-					let scheduleOfPayment = addMonths(moment(startDate), i, frequency, monthsToPayByFrequency);
+					// let scheduleOfPayment = addMonths(moment(startDate), i, frequency, monthsToPayByFrequency);
+					let scheduleOfPayment = addMonths(moment(startDate), i, frequency);
 					let balance = deductBalanceByPrincipal(principalAmount, amortizationLoanAmount, i+1)
-					// console.log('balance ', balance);
+					// let isScheduleOfPaymentPosted = checkIfScheduleOfPaymentPosted(moment(scheduleOfPayment).format('YYYY-MM-DD'));
 					scheduleOfPaymentArray.push(
 						{
-							"date_paid":			scheduleOfPayment,
+							"date_paid":			'',
 							"schedule_of_payment":	scheduleOfPayment,
 							"principal":			parseFloat(amortizationLoanAmount).toFixed(2),
 							"interest":				`${parseFloat(interestRate).toFixed(2)}%`,
@@ -954,6 +975,39 @@
 			e.preventDefault();
 			$('#frm_pagibig_loan_create').trigger('submit');
 			$('#mdl_pagibig_loan_schedule_of_payment').modal('hide');
+		});
+
+		/**
+		 * Added on 10-29-24
+		 * Basta paulo
+		 */
+		$('#btnDelete').click(function (e) {  
+			e.preventDefault();
+			if (confirm('Are you sure you want to delete?')) {
+				let action = {
+					'action' : 'delete_pagibig_loan'
+				};
+				let data = $.param(action);
+				$.ajax({
+					type: "POST",
+					url: handler_pagibig,
+					data: data,
+					dataType: "json",
+					success: function (response) {
+						if(response['result']=="success"){
+							dt_pagibig_loan.draw();
+							notif_success("Deleted Successfully!");
+						}else{
+							alert('Something is wrong, please reload the page. If error persists, kindly contact ISS at local 205. Thank you!');
+						}
+					},
+					error:function(response){
+						console.log('error: '+response);
+						alert('Something is wrong, please reload the page. If error persists, kindly contact ISS at local 205. Thank you!'); 
+					}
+				});
+				
+			}
 		});
 	}); //end
 </script>

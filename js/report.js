@@ -108,25 +108,74 @@ $(document).ready(function () {
 		$('#modalLaborAllocationExport').modal('show');
 	});
 
-	$("#formLaborAllocationExport").submit(function(event){
-		event.preventDefault();
-		let LaborAllocationMonth = $("#selectLaborAllocationMonth").val();
-		let LaborAllocationCutOff = $("#selectLaborAllocationCutoff").val();
-		let LaborAllocationSalaryType = $("#selectLaborAllocationSalaryType").val();
-		console.log('Labor Allocation Month:', LaborAllocationMonth)
-		console.log('Labor Allocation Salary CutOff:', LaborAllocationCutOff)
-		console.log('Labor Allocation Salary Type:', LaborAllocationSalaryType)
-        if( LaborAllocationSalaryType == null){
-            alert("Please select salary type.");
-        }
-		else if(LaborAllocationCutOff == null){
-			alert("Please select cutoff.");
-		}
-		else{
-			window.location.href = "./reports/export_labor_allocation.php?LaborAllocationSelectMonth="+LaborAllocationMonth+"&LaborAllocSelectCutoff="+LaborAllocationCutOff+"&LaborAllocsalaryType="+LaborAllocationSalaryType;
-			// window.location.href = "./reports/export_labor_allocation.php?LaborAllocsalaryType=1&LaborAllocSelectCutoff=2";
-        }
+	$('#btnLaborAllocationReportv2').click(function (e) {
+		e.preventDefault();
+		console.log('btnLaborAllocationExport v2');
+		$('#modalLaborAllocationExport').modal('show');
 	});
+
+	// $("#formLaborAllocationExport").submit(function(event){
+	// 	event.preventDefault();
+	// 	let LaborAllocationMonth = $("#selectLaborAllocationMonth").val();
+	// 	let LaborAllocationCutOff = $("#selectLaborAllocationCutoff").val();
+	// 	let LaborAllocationSalaryType = $("#selectLaborAllocationSalaryType").val();
+	// 	console.log('Labor Allocation Month:', LaborAllocationMonth)
+	// 	console.log('Labor Allocation Salary CutOff:', LaborAllocationCutOff)
+	// 	console.log('Labor Allocation Salary Type:', LaborAllocationSalaryType)
+    //     if( LaborAllocationSalaryType == null){
+    //         alert("Please select salary type.");
+    //     }
+	// 	else if(LaborAllocationCutOff == null){
+	// 		alert("Please select cutoff.");
+	// 	}
+	// 	else{
+	// 		window.location.href = "./reports/export_labor_allocation.php?LaborAllocationSelectMonth="+LaborAllocationMonth+"&LaborAllocSelectCutoff="+LaborAllocationCutOff+"&LaborAllocsalaryType="+LaborAllocationSalaryType;
+	// 		// window.location.href = "./reports/export_labor_allocation.php?LaborAllocsalaryType=1&LaborAllocSelectCutoff=2";
+    //     }
+	// });
+
+	function getLaborAllocationParams() {
+		const LaborAllocationMonth = $("#selectLaborAllocationMonth").val();
+		const LaborAllocationCutOff = $("#selectLaborAllocationCutoff").val();
+		const LaborAllocationSalaryType = $("#selectLaborAllocationSalaryType").val();
+	
+		console.log('Labor Allocation Month:', LaborAllocationMonth);
+		console.log('Labor Allocation Salary CutOff:', LaborAllocationCutOff);
+		console.log('Labor Allocation Salary Type:', LaborAllocationSalaryType);
+	
+		if (!LaborAllocationSalaryType) {
+			alert("Please select salary type.");
+			return null;
+		}
+	
+		if (!LaborAllocationCutOff) {
+			alert("Please select cutoff.");
+			return null;
+		}
+	
+		return {
+			month: LaborAllocationMonth,
+			cutoff: LaborAllocationCutOff,
+			type: LaborAllocationSalaryType
+		};
+	}
+	
+	$('#btnLaborAllocationExport').click(function (e) {
+		e.preventDefault();
+		const params = getLaborAllocationParams();
+		if (params) {
+			window.location.href = `./reports/export_labor_allocation.php?LaborAllocationSelectMonth=${params.month}&LaborAllocSelectCutoff=${params.cutoff}&LaborAllocsalaryType=${params.type}`;
+		}
+	});
+	
+	$('#btnLaborAllocationExportv2').click(function (e) {
+		e.preventDefault();
+		const params = getLaborAllocationParams();
+		if (params) {
+			window.location.href = `./reports/export_labor_allocation_v2.php?LaborAllocationSelectMonth=${params.month}&LaborAllocSelectCutoff=${params.cutoff}&LaborAllocsalaryType=${params.type}`;
+		}
+	});
+	
 
 	$('#modalLaborAllocationExport').on('hide.bs.modal', function() {
 		$('#selectLaborAllocationSalaryType').val(0).trigger('change');
@@ -326,7 +375,18 @@ $(document).ready(function () {
 		console.log('Reset Value')
 	});
 
-	
+	/** START HRIS USER EXPORT **/
+	$('#btnHrisActiveUser').click(function (e) {
+		e.preventDefault();
+		console.log('btnHrisActiveUser');
+		$('#modalHrisActiveUserExport').modal('show');
+	});
 
-	
+	$("#formHrisActiveUserExport").submit(function(event){
+		event.preventDefault();
+		let contribution = $("#selectContribution").val();
+		console.log('Contribution:', contribution)
+
+		window.location.href = "./reports/export_hris_active_user.php?contribution="+contribution;
+	});
 });

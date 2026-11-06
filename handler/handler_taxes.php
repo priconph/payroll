@@ -14,6 +14,7 @@ if(is_ajax()) {
 			case 'read_taxes_info'							: read_taxes_info(); 								break;
 			case 'update_taxes'								: update_taxes(); 									break;
 			case 'import_taxes_data'						: import_taxes_data(); 								break;
+			case 'import_annual_tax_ytd'					: import_annual_tax_ytd(); 							break;
 			/* Tax Base */
 			case 'create_tax_base'							: create_tax_base(); 								break;
 			case 'get_tax_base_data'						: get_tax_base_data(); 								break;
@@ -108,6 +109,7 @@ function update_taxes(){
 		echo json_encode($error);
 	}
 }
+
 function import_taxes_data(){
 	require_once('../class/payroll_oop.php'); 
 	$input_file_name = $_FILES['file']['tmp_name'];
@@ -125,6 +127,29 @@ function import_taxes_data(){
 	}
 	echo json_encode($result);
 }
+
+/**
+ * Import Annual Tax YTD
+ * 04-18-2024
+ */
+function import_annual_tax_ytd(){
+	require_once('../class/payroll_oop.php'); 
+	$input_file_name = $_FILES['file']['tmp_name'];
+	$return = $_POST;
+	$dateToday = date("m-d-Y h:i:s");
+	$ctr = 0;
+	$table = "tbl_annual_tax";
+	if (($getfile = fopen($input_file_name, "r")) !== FALSE) { //OPEN FILE 
+		$data = fgetcsv($getfile, 10000, ",");
+		$delete = PAYROLL::getInstance()->delete_query($table);
+		
+		while (($data = fgetcsv($getfile, 10000, ",")) !== FALSE) {
+			$result = PAYROLL::getInstance()->insert_annual_tax_ytd($data);
+		}
+	}
+	echo json_encode($result);
+}
+
 /* Tax Base */
 function create_tax_base(){
 	try{
@@ -202,8 +227,18 @@ function create_annual_tax(){
 		require_once('../class/payroll_oop.php'); 
 		$request = $_POST;
 		$table = "tbl_annual_tax";
-		$array_fields = array("updated_by","emp_no","gross_income_ytd","forecast_earnings","less_ytd_tax_exempt","yt_tax_withheld","created_at","updated_at");
-		$array_values = array($_SESSION['username'],$request["txt_emp_no"],$request["txt_gross_income"],$request["txt_forecast_earnings"],$request["txt_tax_exempt"],$request["txt_tax_withheld"],date('Y-m-d H:m:s'),date('Y-m-d H:m:s'));
+		$array_fields = array("emp_no",
+								"gross_income_ytd",
+								"forecast_earnings",
+								"less_ytd_tax_exempt",
+								"yt_tax_withheld",
+								"leaves_taxes");
+		$array_values = array($request["txt_emp_no"],
+								$request["txt_gross_income"],
+								$request["txt_forecast_earnings"],
+								$request["txt_tax_exempt"],
+								$request["txt_tax_withheld"],
+								$request["txt_annual_tax_others"]);
 		$result = PAYROLL::getInstance()->insert_query($table,$array_fields,$array_values);
 		$return['result'] = 'success';
 		echo json_encode($return);
@@ -235,6 +270,7 @@ function read_annual_tax_data(){
 			$return['forecast_earnings'][$ctr] 		= $row['forecast_earnings'];
 			$return['less_ytd_tax_exempt'][$ctr] 	= $row['less_ytd_tax_exempt'];
 			$return['yt_tax_withheld'][$ctr] 		= $row['yt_tax_withheld'];
+			$return['leaves_taxes'][$ctr] 			= $row['leaves_taxes'];
 			$ctr++;
 		}
 		foreach ($emp_no as $key => $value) {
@@ -260,8 +296,18 @@ function update_annual_tax(){
 		$request 	= $_POST;
 		$pkid 		= $request['data_id'];
 		$table		= "tbl_annual_tax";
-		$array_fields = array("updated_by","emp_no","gross_income_ytd","forecast_earnings","less_ytd_tax_exempt","yt_tax_withheld","updated_at");
-		$array_values = array($_SESSION['username'],$request["txt_emp_no"],$request["txt_gross_income"],$request["txt_forecast_earnings"],$request["txt_tax_exempt"],$request["txt_tax_withheld"],date('Y-m-d H:m:s'));
+		$array_fields = array("emp_no",
+								"gross_income_ytd",
+								"forecast_earnings",
+								"less_ytd_tax_exempt",
+								"yt_tax_withheld",
+								"leaves_taxes");
+		$array_values = array(	$request["txt_emp_no"],
+								$request["txt_gross_income"],
+								$request["txt_forecast_earnings"],
+								$request["txt_tax_exempt"],
+								$request["txt_tax_withheld"],
+								$request["txt_up_annual_tax_others"]);
 		$result = PAYROLL::getInstance()->update_query($table,$array_fields,$array_values,$pkid);
 		$return['result'] = 'success';
 		echo json_encode($return);

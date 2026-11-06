@@ -66,7 +66,7 @@
 									<div class="row">
 										<div class="col-sm-6">
 											<button class="btn btn-primary fa pull-left" id="btnCreateAnnualTax" data-toggle="modal" data-target="#mdlCreateAnnualTax"><i class="fa fa-plus"></i> New</button>
-											<!-- <button class="btn btn-success fa pull-left" id="btnImportTaxes" data-toggle="modal" data-target="#importTaxes"><i class="fa fa-upload"></i> Import Data</button><br><br> -->
+											<button class="btn btn-success fa pull-left" id="btnImportAnnualTaxYTD" data-toggle="modal" data-target="#importAnnualTaxYTD"><i class="fa fa-upload"></i> Import Data</button><br><br>
 										</div>
 									</div>
 									<br>	
@@ -78,6 +78,7 @@
 												<th>Forecast Earnings</th>
 												<th>Less Ytd Tax Exempt</th>
 												<th>Yt Tax Withheld</th>
+												<th>Other Taxes</th>
 												<th>Action</th>
 											</thead>
 										</table>
@@ -237,12 +238,39 @@ Update Modal
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title"><i class="fa fa-file-excel-o"></i> Import Taxes</h4>
+        <h4 class="modal-title"><i class="fa fa-file-excel-o"></i> Import Taxessss</h4>
       </div>
 	  	<form id="formImportTaxes" method="" enctype="multipart/form-data">
 		  <div class="modal-body">
 			<!-- <label class="col-md-4 control-label">Choose CSV File</label>
 			<input type="file" name="oem_file" id="fileOEM" accept=".csv"> -->
+			<div class="form-group">
+				<label for="file">Choose CSV File</label>
+				<input type="file" name="file" class="form-control-file" id="file" accept=".csv" required>
+			</div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="submit" class="btn btn-success" name="import" id="btnImport"><i class="fa fa-upload" id="importIcons"></i> Import</button>
+			<button type="button" class="btn btn-default fa fa-close" data-dismiss="modal" id="btn_close"> Close</button>
+		  </div>
+		</form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!--
+	Import Annual Tax YTD
+	04-18-2024
+-->
+<div class="modal fade" tabindex="-1" role="dialog" id="importAnnualTaxYTD" data-backdrop="static">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"><i class="fa fa-file-excel-o"></i> Import Annual Tax YTD</h4>
+      </div>
+	  	<form id="formImportAnnualTaxYTD" method="" enctype="multipart/form-data">
+		  <div class="modal-body">
 			<div class="form-group">
 				<label for="file">Choose CSV File</label>
 				<input type="file" name="file" class="form-control-file" id="file" accept=".csv" required>
@@ -413,6 +441,12 @@ Update Modal
 									<input type="number" class="form-control" id="txt_tax_withheld" name="txt_tax_withheld" min="0" step="0.01" pattern="^\d*(\.\d{0,2})?$">
 								</div>
 							</div>
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="txt_annual_tax_others" class="col-form-label">Other Taxes</label>
+									<input type="number" class="form-control" id="txt_annual_tax_others" name="txt_annual_tax_others" min="0" step="0.01" pattern="^\d*(\.\d{0,2})?$">
+								</div>
+							</div>
 						</div>
 					
 				</div>
@@ -429,14 +463,14 @@ Update Modal
 	<div class="modal-dialog" style="margin-top:0%;">
 		<div class="modal-content">
 			<div class="modal-header" style="overflow-y:auto;">
-				New Annual Tax Info
+				Update Annual Tax Info
 			</div>
 			<form id="frm_update_annual_tax">
 				<div class="modal-body" style="overflow-y:auto;">
 						<div class="row" style="margin-top:-10px;">
 							<div class="col-sm-12">
 								<div class="form-group">
-									<input type="text" class="form-control"  name="data_id">
+									<input type="hidden" class="form-control"  name="data_id">
 								</div>
 							</div>
 						</div>
@@ -476,6 +510,12 @@ Update Modal
 								<div class="form-group">
 									<label for="txt_tax_withheld" class="col-form-label">Yt Tax Withheld</label>
 									<input type="number" class="form-control" id="txt_tax_withheld" name="txt_tax_withheld" min="0" step="0.01" pattern="^\d*(\.\d{0,2})?$">
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="txt_up_annual_tax_others" class="col-form-label">Other Taxes</label>
+									<input type="number" class="form-control" id="txt_up_annual_tax_others" name="txt_up_annual_tax_others" min="0" step="0.01" pattern="^\d*(\.\d{0,2})?$">
 								</div>
 							</div>
 						</div>
@@ -661,6 +701,7 @@ Update Modal
 				'action' : 'create_annual_tax'
 			};
 			let data = $.param(action) +'&'+ $(this).serialize();
+			console.log('data ', data);
 			$.ajax({
 				type: "POST",
 				url: handler_taxes,
@@ -756,6 +797,48 @@ Update Modal
                 }
 			});
 		});
+		
+		/**
+		 * Import Annual Tax YTD
+		 * Added by JD on 04-18-2024
+		 */
+		$('#formImportAnnualTaxYTD').submit(function (e) { 
+			e.preventDefault();
+			// formImportAnnualTaxYTD
+			let serialize_data = new FormData(this);
+			serialize_data.append('action',"import_annual_tax_ytd");
+			$.ajax({
+				url: handler_taxes,
+				type:"POST",
+				data: serialize_data,
+				dataType:'json',
+                cache: false,
+				contentType:false,
+				processData:false,
+				beforeSend: function(){
+					// $('#btnImport').prop('disabled', true);
+					// $("#importIcons").addClass('fa fa-spinner fa-pulse');
+				},
+				success:function(data)
+				{
+					$('#importAnnualTaxYTD').modal('hide');
+					$('#formImportAnnualTaxYTD')[0].reset();
+					notif_success('Import Successfully');
+					dt_annual_taxes.draw();
+
+					// $('#btnImport').prop('disabled', false);
+					// $("#importIcons").removeClass('fa fa-spinner fa-pulse');
+					// $("#importIcons").addClass('fa fa-upload');
+				},
+				error: function(data, xhr, status){
+                    console.log('Data: ' + data + "\n" + "XHR: " + xhr + "\n" + "Status: " + status);
+					notif_error('Import Failed. Please try again.');
+					// $('#btnImport').prop('disabled', false);
+					// $("#importIcons").removeClass('fa fa-spinner fa-pulse');
+					// $("#importIcons").addClass('fa fa-upload');
+                }
+			});
+		});
 		/****************
 			FUNCTIONS 
 		*****************/
@@ -803,6 +886,7 @@ Update Modal
 						$('#frm_update_annual_tax input[name="txt_forecast_earnings"]').val(response['forecast_earnings'][i]);
 						$('#frm_update_annual_tax input[name="txt_tax_exempt"]').val(response['less_ytd_tax_exempt'][i]);
 						$('#frm_update_annual_tax input[name="txt_tax_withheld"]').val(response['yt_tax_withheld'][i]);
+						$('#frm_update_annual_tax input[name="txt_up_annual_tax_others"]').val(response['leaves_taxes'][i]);
 						assign_value_select2('#frm_update_annual_tax #txt_emp_no',response['emp_no'][i]);
 						re_initialize_select2_server_side('#mdlUpdateAnnualTax #txt_emp_no','#mdlUpdateAnnualTax #frm_update_annual_tax',[],"server_side_scripts/dropdown/common/dd_hris_all_list.php");
 					}

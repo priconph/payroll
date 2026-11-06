@@ -14,8 +14,10 @@ if(is_ajax()) {
 			case 'read_pagibig_loan'						: read_pagibig_loan(); 								break;
 			case 'set_paid'						            : set_paid(); 								        break;
 			case 'read_pagibig_loan_details'                : read_pagibig_loan_details(); 						break;
+			case 'is_schedule_of_payment_posted'            : is_schedule_of_payment_posted(); 					break;
 			case 'update_pagibig_loan'						: update_pagibig_loan(); 							break;
 			case 'import_pagibig_loan_data'					: import_pagibig_loan_data(); 						break;
+            case 'delete_pagibig_loan'					    : delete_pagibig_loan(); 	                        break;
 		}
 	}
 }
@@ -291,6 +293,46 @@ function read_pagibig_loan_details(){
         echo json_encode($error);
     }
 }
+function is_schedule_of_payment_posted(){
+    // echo 'is_schedule_of_payment_posted';
+    try{
+        require_once('../class/payroll_oop.php'); 
+        $request 			        = $_POST;
+        $result 			        = '';
+        $schedule_of_payment 		= $request['schedule_of_payment'];
+        $tablePagibigLoanDetails    = 'tbl_payroll_info';
+        $columnPagibigLoanDetails   = array('*');
+        $joinsPagibigLoanDetails    = '';
+        $wherePagibigLoanDetails    = 'WHERE date_cut_off = "'.$schedule_of_payment.'" AND posted = "Y"';
+        $orderPagibigLoanDetails    = '';
+        $limitPagibigLoanDetails    = "";
+        $resultPagibigLoanDetails   = PAYROLL::getInstance()->select_all_query(
+                                        $columnPagibigLoanDetails,
+                                        $tablePagibigLoanDetails,
+                                        $joinsPagibigLoanDetails,
+                                        $wherePagibigLoanDetails,
+                                        $orderPagibigLoanDetails,
+                                        $limitPagibigLoanDetails
+                                    );
+        $payrollInfo = array();
+        while($rowPagibigLoanDetails = mysqli_fetch_array($resultPagibigLoanDetails)){
+            $innerArray = array(
+                'description'             => $rowPagibigLoanDetails['description'],
+                'description'   => $rowPagibigLoanDetails['description'],
+                'date_cut_off'             => $rowPagibigLoanDetails['date_cut_off'],
+                'posted'              => $rowPagibigLoanDetails['posted'],
+            );
+            array_push($payrollInfo, $innerArray);
+        }
+        $return['payrollInfo'] = $payrollInfo;
+        $return['result'] = "success";
+        echo json_encode($return);
+    }catch(Exception $err){
+        $error['error_message'] =  $err;
+        $error['has_error'] =  'Exception Error';
+        echo json_encode($error);
+    }
+}
 function update_pagibig_loan(){
     // echo 'true';
     // return;
@@ -344,7 +386,7 @@ function import_pagibig_loan_data(){
         $table = "tbl_pagibig_loan";
         if (($getfile = fopen($input_file_name, "r")) !== FALSE) { //OPEN FILE 
             $data = fgetcsv($getfile, 10000, ",");
-            if(count($data) == 3){
+            if(count($data) == 4){
                 /* delete first before add new info */
                 $delete = PAYROLL::getInstance()->delete_query($table);
                 while (($data = fgetcsv($getfile, 10000, ",")) !== FALSE) {
@@ -359,6 +401,22 @@ function import_pagibig_loan_data(){
                 /* the tbl_pagibig_loan has a required 3 columns only */
             }
         }
+        echo json_encode($return);
+    }catch(Exception $err){
+        $error['error_message'] =  $err;
+        $error['has_error'] =  'Exception Error';
+        echo json_encode($error);
+    }
+}
+
+function delete_pagibig_loan(){
+    // echo 'delete_pagibig_loan';
+    try{
+        require_once('../class/payroll_oop.php'); 
+        $table = "tbl_pagibig_loan";
+        $result = PAYROLL::getInstance()->delete_query($table);
+        
+        $return['result'] = 'success';
         echo json_encode($return);
     }catch(Exception $err){
         $error['error_message'] =  $err;

@@ -66,5 +66,6 @@ class HRIS_details extends mysqli
 		$query = "SELECT SQL_CALC_FOUND_ROWS " . implode(", ", $array_fields) . " FROM {$table} {$joins} {$sql_where} {$sql_limit};";
 		return $this->query($query);
 	}
+
 }
 ?>

@@ -110,32 +110,70 @@ while($row = mysqli_fetch_array($resultHRISActiveEmployees)){
  */
 
 $PhilHealthContributionCutOffType = $_GET['PhilHealthContributionCutOffType'];
-// echo json_encode($PhilHealthContributionCutOffType);
 $selectMonth    = $_GET['selectMonth'];
-// echo json_encode($selectMonth);
-$array_fields 	= 	array('*');
-$table 	   		= 	'tbl_payroll_info_data a';
-$joins 	   		=	'INNER JOIN tbl_payroll_info b
-					ON b.id = a.fkid_payroll_info
-					';
-$sql_where 		= 	'WHERE a.fkid_payroll_info = b.id
-						AND b.cut_off = '.$PhilHealthContributionCutOffType.'
-						AND MONTH(b.date_cut_off)='.$selectMonth.'';
-$sql_order 		= 	'';
-$sql_limit 		= 	'';
-$resultOfPayrollInfoPHPremium 		= RAPID::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
-$returnOfPayrollInfoPHPremium 		= array();
-while($row = mysqli_fetch_array($resultOfPayrollInfoPHPremium)){
-	$temporaryArray = array(
-		'employee_no'		=> $row['employee_no'],
-		'ph_premium'		=> $row['ph_premium'],
-        'regular_pay'       => $row['regular_pay'],
-        'date_start'       => $row['date_start'],
-        'date_end'       => $row['date_end'],
 
-	);
-	array_push($returnOfPayrollInfoPHPremium, $temporaryArray);
+if($PhilHealthContributionCutOffType == 2 && $selectMonth == 12){
+	$year = date('Y') - 1;
+	$array_fields 	= 	array('*');
+	$table 	   		= 	'tbl_payroll_info_data a';
+	$joins 	   		=	'INNER JOIN tbl_payroll_info b
+						ON b.id = a.fkid_payroll_info
+						';
+	$sql_where 		= 	'WHERE a.fkid_payroll_info = b.id
+							AND b.cut_off = '.$PhilHealthContributionCutOffType.'
+							AND MONTH(b.date_cut_off)='.$selectMonth.'
+							AND YEAR(b.date_cut_off)='.$year.' 
+							';
+							// AND YEAR(b.date_cut_off)= 2024
+							// added 7-5-2024  Darren
+
+	$sql_order 		= 	'';
+	$sql_limit 		= 	'';
+	$resultOfPayrollInfoPHPremium 		= RAPID::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
+	$returnOfPayrollInfoPHPremium 		= array();
+	while($row = mysqli_fetch_array($resultOfPayrollInfoPHPremium)){
+		$temporaryArray = array(
+			'employee_no'		=> $row['employee_no'],
+			'ph_premium'		=> $row['ph_premium'],
+			'regular_pay'       => $row['regular_pay'],
+			'date_start'       => $row['date_start'],
+			'date_end'       => $row['date_end'],
+
+		);
+		array_push($returnOfPayrollInfoPHPremium, $temporaryArray);
+	}
+}else{
+	$array_fields 	= 	array('*');
+	$table 	   		= 	'tbl_payroll_info_data a';
+	$joins 	   		=	'INNER JOIN tbl_payroll_info b
+						ON b.id = a.fkid_payroll_info
+						';
+	$sql_where 		= 	'WHERE a.fkid_payroll_info = b.id
+							AND b.cut_off = '.$PhilHealthContributionCutOffType.'
+							AND MONTH(b.date_cut_off)='.$selectMonth.'
+							AND YEAR(b.date_cut_off)='.date('Y').' 
+							';
+							// AND YEAR(b.date_cut_off)= 2024
+							// added 7-5-2024  Darren
+
+	$sql_order 		= 	'';
+	$sql_limit 		= 	'';
+	$resultOfPayrollInfoPHPremium 		= RAPID::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
+	$returnOfPayrollInfoPHPremium 		= array();
+	while($row = mysqli_fetch_array($resultOfPayrollInfoPHPremium)){
+		$temporaryArray = array(
+			'employee_no'		=> $row['employee_no'],
+			'ph_premium'		=> $row['ph_premium'],
+			'regular_pay'       => $row['regular_pay'],
+			'date_start'       => $row['date_start'],
+			'date_end'       => $row['date_end'],
+
+		);
+		array_push($returnOfPayrollInfoPHPremium, $temporaryArray);
+	}
 }
+
+
 // echo json_encode($returnOfPayrollInfoPHPremium);
 // exit();
 
@@ -160,7 +198,8 @@ for ($i=0; $i < count($returnOfEOMBySalaryType); $i++) {
                         'Section' => $returnHRISActiveEmployees[$j]['Section'],
                         'Department' => $returnHRISActiveEmployees[$j]['Department'],
                         'Division' => $returnHRISActiveEmployees[$j]['Division'],
-                        'regular_pay' => $returnOfPayrollInfoPHPremium[$k]['regular_pay'],
+                        'ph_premium' => $returnOfPayrollInfoPHPremium[$k]['ph_premium'],
+                        // 'regular_pay' => $returnOfPayrollInfoPHPremium[$k]['regular_pay'], // Commented - 09042026
                     );
                     array_push($arrayEmployeeWithMatchedEmpNo, $temporaryArray);
 				}
@@ -169,8 +208,6 @@ for ($i=0; $i < count($returnOfEOMBySalaryType); $i++) {
 	}
 }
 
-// echo json_encode($arrayEmployeeWithMatchedEmpNo);
-// exit();
 
 $arrayComputedDataByProductline = array();
 for ($i=0; $i < count($returnOfAllProductLine); $i++) {
@@ -187,11 +224,14 @@ for ($i=0; $i < count($returnOfAllProductLine); $i++) {
 			if($returnOfAllProductLine[$i]['Division'] == $arrayEmployeeWithMatchedEmpNo[$j]['Division']
             &&  $returnOfAllProductLine[$i]['Department'] == $arrayEmployeeWithMatchedEmpNo[$j]['Department'] 
             && $returnOfAllProductLine[$i]['Section'] == $arrayEmployeeWithMatchedEmpNo[$j]['Section']){
+				
+
 
 				$arrayTemporaryComputedData['Division_Name']				= $returnOfAllProductLine[$i]['Division'];
                 $arrayTemporaryComputedData['Section_Name']				= $returnOfAllProductLine[$i]['Section'];
 				$arrayTemporaryComputedData['Department_Name']				= $returnOfAllProductLine[$i]['Department'];
-                $arrayTemporaryComputedData['Regular_pay']				+= $arrayEmployeeWithMatchedEmpNo[$j]['regular_pay'];
+                // $arrayTemporaryComputedData['Regular_pay']				+= $arrayEmployeeWithMatchedEmpNo[$j]['regular_pay']; // commented 09042026
+                $arrayTemporaryComputedData['ph_premium']				+= $arrayEmployeeWithMatchedEmpNo[$j]['ph_premium'];
 
 			}
 		}
@@ -265,7 +305,10 @@ $excel->setFormat('A2',$arrayStyleCellA2);
 
 $sd = date("F d", strtotime($returnOfPayrollInfoPHPremium[0]['date_start']));
 $ed = date("d, Y", strtotime($returnOfPayrollInfoPHPremium[0]['date_end']));
+
+
 $excel->place_value('A3',''.$st.' Employees ('.$sd.' - '.$ed.')','string');
+
 $arrayStyleCellA3 = array(
 	'name'   		=> 'Abadi MT Condensed Light',
 	'size'   		=> '12',
@@ -296,6 +339,7 @@ $excel->objPHPExcel->getColumnDimension('B')->setAutoSize(true);
 $excel->objPHPExcel->getColumnDimension('C')->setAutoSize(true);
 $excel->objPHPExcel->getColumnDimension('D')->setAutoSize(true);
 $excel->objPHPExcel->getColumnDimension('E')->setAutoSize(true);
+$excel->objPHPExcel->getColumnDimension('F')->setAutoSize(true);
 $arrayStyleCellA6 = array(
 	'size'   		=> '16',
 	'bold'			=> 'true',
@@ -309,11 +353,27 @@ $rowStart = 7;
     if($salaryType == 2 || $salaryType == 4){
         for ($i=0; $i < count($arrayComputedDataByProductline); $i++) {  
             if($arrayComputedDataByProductline[$i]['Section_Name'] != ""){
-                $sectionEmployeeShare 	= doubleval((($arrayComputedDataByProductline[$i]['Regular_pay'] * 2) * 0.04) / 2);
-                $sectionEmployerShare 	= doubleval((($arrayComputedDataByProductline[$i]['Regular_pay'] * 2) * 0.04) / 2);
-                $sectionTotal 			= $sectionEmployeeShare + $sectionEmployerShare;
-                // $divisionTotal  += $sectionTotal;
-    
+                // $sectionEmployerShare 	= doubleval((($arrayComputedDataByProductline[$i]['Regular_pay'] * 26) * 0.05) / 2);
+                // $sectionEmployeeShare 	= doubleval((($arrayComputedDataByProductline[$i]['Regular_pay'] * 26) * 0.05) / 2);
+                // $sectionTotal 			= $sectionEmployeeShare + $sectionEmployerShare;
+
+                // $sectionEmployeeShare = round(
+                //     (($arrayComputedDataByProductline[$i]['Regular_pay'] * 2) * 0.05) / 2,
+                //     2
+                // ); // Commented - 09042026
+
+                // $sectionEmployerShare = round(
+                //     (($arrayComputedDataByProductline[$i]['Regular_pay'] * 2) * 0.05) / 2,
+                //     2
+                // ); // Commented - 09042026
+				$sectionEmployeeShare = $arrayComputedDataByProductline[$i]['ph_premium'];
+				$sectionEmployerShare = $arrayComputedDataByProductline[$i]['ph_premium'];
+
+                $sectionTotal = round(
+                    $sectionEmployeeShare + $sectionEmployerShare,
+                    2
+                );
+
                 $excel->place_value('A'.$rowCounter,$arrayComputedDataByProductline[$i]['Division_Name'],'string');
                 $excel->place_value('B'.$rowCounter,$arrayComputedDataByProductline[$i]['Department_Name'],'string');
                 $excel->place_value('C'.$rowCounter,$arrayComputedDataByProductline[$i]['Section_Name'],'string');
@@ -328,10 +388,27 @@ $rowStart = 7;
     else{
         for ($i=0; $i < count($arrayComputedDataByProductline); $i++) {  
             if($arrayComputedDataByProductline[$i]['Section_Name'] != ""){
-                $sectionEmployerShare 	= doubleval((($arrayComputedDataByProductline[$i]['Regular_pay'] * 26) * 0.04) / 2);
-                $sectionEmployeeShare 	= doubleval((($arrayComputedDataByProductline[$i]['Regular_pay'] * 26) * 0.04) / 2);
-                $sectionTotal 			= $sectionEmployeeShare + $sectionEmployerShare;
-    
+                // $sectionEmployerShare 	= doubleval((($arrayComputedDataByProductline[$i]['Regular_pay'] * 26) * 0.05) / 2);
+                // $sectionEmployeeShare 	= doubleval((($arrayComputedDataByProductline[$i]['Regular_pay'] * 26) * 0.05) / 2);
+                // $sectionTotal 			= $sectionEmployeeShare + $sectionEmployerShare;
+                
+                // $sectionEmployeeShare = round(
+                //     (($arrayComputedDataByProductline[$i]['Regular_pay'] * 2) * 0.05) / 2,
+                //     2
+                // ); // Commented - 09042026
+				$sectionEmployeeShare = $arrayComputedDataByProductline[$i]['ph_premium'];
+
+                // $sectionEmployerShare = round(
+                //     (($arrayComputedDataByProductline[$i]['Regular_pay'] * 2) * 0.05) / 2,
+                //     2
+                // ); // Commented - 09042026
+				$sectionEmployerShare = $arrayComputedDataByProductline[$i]['ph_premium'];
+
+                $sectionTotal = round(
+                    $sectionEmployeeShare + $sectionEmployerShare,
+                    2
+                );
+
                 $excel->place_value('A'.$rowCounter,$arrayComputedDataByProductline[$i]['Division_Name'],'string');
                 $excel->place_value('B'.$rowCounter,$arrayComputedDataByProductline[$i]['Department_Name'],'string');
                 $excel->place_value('C'.$rowCounter,$arrayComputedDataByProductline[$i]['Section_Name'],'string');
@@ -351,6 +428,11 @@ $rowStart = 7;
     }else{
         $title = 'JS/SS';
     }
+
+    $excel->objPHPExcel
+    ->getStyle('D7:F'.($rowCounter - 1))
+    ->getNumberFormat()
+    ->setFormatCode('#,##0.0000');
 
 /* set file name */
 $filename = "Monthly Philhealth Contribution Report ".$title;

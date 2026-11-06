@@ -14,6 +14,7 @@
                                 <li role="presentation"><a href="#sss_reports" aria-controls="sss_reports" role="tab" data-toggle="tab"> SSS Reports </a></li>
                                 <li role="presentation"><a href="#philhealth_reports" aria-controls="philhealth_reports" role="tab" data-toggle="tab"> Philhealth Reports</a></li>
                                 <li role="presentation"><a href="#pagibig_reports" aria-controls="pagibig_reports" role="tab" data-toggle="tab"> Pag-ibig Reports</a></li>
+                                <li role="presentation"><a href="#hris_active_users" aria-controls="hris_active_users" role="tab" data-toggle="tab"> HRIS Users</a></li>
 
                             </ul>
 
@@ -45,6 +46,9 @@
                                     <button class="btn btn-primary fa pull-left" id="btnPagibigContri" title= "Pag-ibig Contribution"><i class="fa fa-file-excel-o"></i> Export Pag-ibig Contribution</button>
                                 </div>
 
+                                <div role="tabpanel" class="tab-pane" id="hris_active_users">
+								    <button class="btn btn-primary fa pull-left" id="btnHrisActiveUser" title= "HRIS User"><i class="fa fa-file-excel-o"></i> Export HRIS User</button>
+                                </div>
                             </div>
                             
                         </div>
@@ -121,18 +125,18 @@
                                 <label class="form-control-label">Month:</label> 
                                 <select class="form-control" id="selectLaborAllocationMonth" name="month">
                                     <option value="0" disabled selected>Select One</option>
-                                    <option value="1">Jan</option>
-                                    <option value="2">Feb</option>
-                                    <option value="3">Mar</option>
-                                    <option value="4">Apr</option>
+                                    <option value="1">January</option>
+                                    <option value="2">February</option>
+                                    <option value="3">March</option>
+                                    <option value="4">April</option>
                                     <option value="5">May</option>
-                                    <option value="6">Jun</option>
-                                    <option value="7">Jul</option>
-                                    <option value="8">Aug</option>
-                                    <option value="9">Sep</option>
-                                    <option value="10">Oct</option>
-                                    <option value="11">Nov</option>
-                                    <option value="12">Dec</option>
+                                    <option value="6">June</option>
+                                    <option value="7">July</option>
+                                    <option value="8">August</option>
+                                    <option value="9">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
                                 </select>
                             </div>
 
@@ -159,6 +163,7 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal" style="float:left;">Close</button>
                             <button type="submit" class="btn btn-success" id="btnLaborAllocationExport">Export</button>
+                            <button type="submit" class="btn btn-success" id="btnLaborAllocationExportv2">Export v2</button>
                         </div>
                     </form>
                 </div>
@@ -638,10 +643,38 @@
             </div>
         </div>
 
+        <div class="modal fade" tabindex="-1" role="dialog" id="modalHrisActiveUserExport">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title"><strong>Export HRIS User</strong></h4>
+                    </div>
+                    <form id="formHrisActiveUserExport">
+                        <div class="modal-body">
+                        <div class="form-group"> 
+                            <div class="form-group"> 
+                                <label class="form-control-label">Contribution:</label> 
+                                <select class="form-control" id="selectContribution" name="contribution" required>
+                                    <option value="" disabled selected>Select One</option>
+                                    <option value="1">With</option>
+                                    <option value="2">Without</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal" style="float:left;">Close</button>
+                            <button type="submit" class="btn btn-success" id="btnHrisActiveUserExport">Export</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
 	</section>
 </section>
 
-<script src="js/report.js?n=4" type="text/javascript">
+<script src="js/report.js?n=1" type="text/javascript">
     // function exportToExcelPayrollReport() {
     //     let payrollReport = $("#selectSalaryType").val();
                     

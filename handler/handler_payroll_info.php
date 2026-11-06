@@ -22,6 +22,7 @@
 				/* Working Days */
 				case 'add_working_days'						: add_working_days(); 			break;
 				case 'get_working_days_id'					: get_working_days_id(); 		break;
+				case 'get_working_days'						: get_working_days(); 		break;
 				case 'update_working_days'					: update_working_days(); 		break;
 				/* Salary Report */
 				case "import_salary_report_data"			: import_salary_report_data(); 	break;
@@ -45,9 +46,9 @@
             require_once('../class/payroll_oop.php'); 
 			$request = $_POST;
 			$table = "tbl_payroll_info";
-			$array_fields = array('created_by',"description","cut_off","date_start","date_end","date_cut_off","posted","created_at","updated_at");
+			$array_fields = array('created_by',"description","cut_off","date_start","date_end","date_cut_off","posted","working_days","created_at","updated_at");
 			$array_values = array($_SESSION['username'],$request["slct_description"],$request["slct_cut_off"],$request["dt_start_date"],
-									$request["dt_end_date"],$request["dt_cut_off_date"],$request["slct_posted"],date('Y-m-d H:m:s'),date('Y-m-d H:m:s')
+									$request["dt_end_date"],$request["dt_cut_off_date"],$request["slct_posted"],$request["working_days"],date('Y-m-d H:m:s'),date('Y-m-d H:m:s')
 							);
 			$result = PAYROLL::getInstance()->insert_query($table,$array_fields,$array_values);
 			$return['result'] = 'success';
@@ -82,6 +83,7 @@
 				$return['EndingDate'][$ctr] 		= $row['date_end'];
 				$return['CutOffDate'][$ctr] 		= $row['date_cut_off'];
 				$return['Posted'][$ctr] 			= $row['posted'];
+				$return['WorkingDays'][$ctr] 		= $row['working_days'];
 				$return['Lastupdate'][$ctr]			= date('M d, Y h:i:s A',strtotime($row['updated_at']));
 				$ctr++;
 			}
@@ -102,9 +104,9 @@
 			$pkid 		= $request['data_id'];
 			$table = "tbl_payroll_info";
 
-			$array_fields = array('created_by',"description","cut_off","date_start","date_end","date_cut_off","posted","updated_at",);
+			$array_fields = array('created_by',"description","cut_off","date_start","date_end","date_cut_off","posted","working_days","updated_at",);
 			$array_values = array($_SESSION['username'],$request["slct_description"],$request["slct_cut_off"],$request["dt_start_date"],
-									$request["dt_end_date"],$request["dt_cut_off_date"],$request["slct_posted"],date('Y-m-d H:m:s'),
+									$request["dt_end_date"],$request["dt_cut_off_date"],$request["slct_posted"],$request["working_days"],date('Y-m-d H:m:s'),
 							);
 			// $result = PAYROLL::getInstance()->update_query($table,$array_fields,$array_values,$pkid,$idname);
 			$result = PAYROLL::getInstance()->update_query($table,$array_fields,$array_values,$pkid);
@@ -312,8 +314,8 @@
 			$request 	= $_POST;
 			$pkid 		= $request['working_days_id'];
 			$table = "tbl_working_days";
-			$array_fields = array(	'working_days',"updated_at","updated_by");
-			$array_values = array(	$request["edit_number_of_working_days"],date('Y-m-d H:m:s'),$_SESSION['username']);
+			$array_fields = array(	'working_days');
+			$array_values = array(	$request["edit_number_of_working_days"]);
 			$result = PAYROLL::getInstance()->update_query($table,$array_fields,$array_values,$pkid);
 			// $result = PAYROLL::getInstance()->update_query_script($table,$array_fields,$array_values,$pkid);
             // echo json_encode($result);
@@ -519,6 +521,41 @@
 			}
 			echo json_encode($return);
 		} catch (\Throwable $err) {
+			$error['error_message'] =  $err;
+			$error['has_error'] =  'Exception Error';
+			echo json_encode($error);
+		}
+	}
+
+	/**
+	 * added on 01-02-2025
+	 */
+	function get_working_days(){
+		try{
+            require_once('../class/payroll_oop.php'); 
+			$request 			= $_GET;
+			$result 			= '';
+			$array_fields 		= array('*');
+			$table 	   			= 'tbl_working_days';
+			$joins				= '';
+			$sql_where			= 'WHERE logdel = "0"';
+			$sql_order	 		= '';
+			$sql_limit 			= "";
+			$result 			= PAYROLL::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
+			$ctr 				= 0;	
+			// write_logs::getInstance()->save_logs('1',$query);
+			if(mysqli_num_rows($result) > 0){
+				while($row = mysqli_fetch_array($result)){			
+					$return['id'][$ctr] 						= $row['id'];
+					$return['working_days'][$ctr] 					= $row['working_days'];
+					
+					$ctr++;
+				}
+				$return['ctr'] = $ctr;
+			}
+			
+			echo json_encode($return);
+		}catch(Exception $err){
 			$error['error_message'] =  $err;
 			$error['has_error'] =  'Exception Error';
 			echo json_encode($error);

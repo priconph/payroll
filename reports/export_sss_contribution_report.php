@@ -83,11 +83,13 @@ $joins 	   		=	'
 						ON division.pkid = department.fkDivision 
 					';
 $sql_where 		= '
-					WHERE NOT employeeInfo.EmpStatus = 2
+					WHERE (employeeInfo.EmpStatus = 1 OR employeeInfo.EmpStatus = 2)
 					AND section.isActive = 1 
 					AND department.isActive = 1 
 					AND division.logdel = 0 
 				';
+
+				// WHERE NOT employeeInfo.EmpStatus = 2
 $sql_order 		= 'ORDER BY department.Department ASC, division.Division ASC';
 $sql_limit 		= '';
 $resultHRISActiveEmployees 		= HRIS::getInstance()->select_all_division($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
@@ -107,26 +109,75 @@ while($row = mysqli_fetch_array($resultHRISActiveEmployees)){
 /**
  * Get data in tbl_sss
  */
-$array_fields 	= 	array('*');
-$table 	   		= 	'tbl_payroll_info_data a';
-// $joins 	   		=	'';
-$joins              = 'INNER JOIN tbl_payroll_info b
-					ON b.id = a.fkid_payroll_info
-					';
-// $sql_where 		= 	'';
-$sql_where          = 'WHERE a.fkid_payroll_info = b.id
-						AND b.description ='.$salaryType.' AND MONTH(b.date_cut_off)= '.$select_month;
-$sql_order 		= 	'';
-$sql_limit 		= 	'';
-$resultOfPayrollInfoSSSPremium 		= RAPID::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
-$returnOfPayrollInfoSSSPremium 		= array();
-while($row = mysqli_fetch_array($resultOfPayrollInfoSSSPremium)){
-	$temporaryArray = array(
-		'employee_no'		=> $row['employee_no'],
-		'sss_premium'		=> $row['sss_premium'],
-	);
-	array_push($returnOfPayrollInfoSSSPremium, $temporaryArray);
+if($select_month == 12 ){
+	$year = date('Y') - 1;
+	$array_fields 	= 	array('*');
+	$table 	   		= 	'tbl_payroll_info_data a';
+	// $joins 	   		=	'';
+	$joins              = 'INNER JOIN tbl_payroll_info b
+						ON b.id = a.fkid_payroll_info
+						';
+	// $sql_where 		= 	'';
+	// $sql_where          = 'WHERE a.fkid_payroll_info = b.id
+	// 						AND b.description ='.$salaryType.' 
+	// 						AND MONTH(b.date_cut_off)= '.$select_month
+	// 						; commented 07-05-2024 - darren
+
+	// 07-05-2024 - darren
+	$sql_where 			= 'WHERE a.fkid_payroll_info = b.id
+							AND b.description ='.$salaryType.'
+							AND MONTH(b.date_cut_off)='.$select_month.'
+							AND YEAR(b.date_cut_off)='.$year.'
+							';
+							// AND YEAR(b.date_cut_off)= 2024
+							// added 7-5-2024  Darren
+
+	$sql_order 		= 	'';
+	$sql_limit 		= 	'';
+	$resultOfPayrollInfoSSSPremium 		= RAPID::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
+	$returnOfPayrollInfoSSSPremium 		= array();
+	while($row = mysqli_fetch_array($resultOfPayrollInfoSSSPremium)){
+		$temporaryArray = array(
+			'employee_no'		=> $row['employee_no'],
+			'sss_premium'		=> $row['sss_premium'],
+		);
+		array_push($returnOfPayrollInfoSSSPremium, $temporaryArray);
+	}
+}else{
+	$array_fields 	= 	array('*');
+	$table 	   		= 	'tbl_payroll_info_data a';
+	// $joins 	   		=	'';
+	$joins              = 'INNER JOIN tbl_payroll_info b
+						ON b.id = a.fkid_payroll_info
+						';
+	// $sql_where 		= 	'';
+	// $sql_where          = 'WHERE a.fkid_payroll_info = b.id
+	// 						AND b.description ='.$salaryType.' 
+	// 						AND MONTH(b.date_cut_off)= '.$select_month
+	// 						; commented 07-05-2024 - darren
+
+	// 07-05-2024 - darren
+	$sql_where 			= 'WHERE a.fkid_payroll_info = b.id
+							AND b.description ='.$salaryType.'
+							AND MONTH(b.date_cut_off)='.$select_month.'
+							AND YEAR(b.date_cut_off)='.date('Y').'
+							';
+							// AND YEAR(b.date_cut_off)= 2024
+							// added 7-5-2024  Darren
+
+	$sql_order 		= 	'';
+	$sql_limit 		= 	'';
+	$resultOfPayrollInfoSSSPremium 		= RAPID::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
+	$returnOfPayrollInfoSSSPremium 		= array();
+	while($row = mysqli_fetch_array($resultOfPayrollInfoSSSPremium)){
+		$temporaryArray = array(
+			'employee_no'		=> $row['employee_no'],
+			'sss_premium'		=> $row['sss_premium'],
+		);
+		array_push($returnOfPayrollInfoSSSPremium, $temporaryArray);
+	}
 }
+
 // echo json_encode($returnOfPayrollInfoSSSPremium);
 // exit();
 
@@ -262,7 +313,7 @@ if(file_exists($excel_class)){
 /* Excel initialization */
 $excel = new EXCEL;
 /* Set Title */
-$excel->title = 'SSS Loan';
+$excel->title = 'SSS Contri';
 /* Add a new page */
 $excel->add_page();
 /* Set page orientation */
@@ -296,7 +347,7 @@ $arrayStyleCellA1 = array(
 $excel->setFormat('A1',$arrayStyleCellA1);
 
 
-$excel->place_value('A2','Monthly SSS Contribution Report','string');
+$excel->place_value('A2',' SSS Contribution Report','string');
 $arrayStyleCellA2 = array(
 	'name'   		=> 'Abadi MT Condensed Light',
 	'size'   		=> '12',
@@ -400,7 +451,7 @@ for ($i=0; $i < count($arrayComputedDataByProductline); $i++) {
 }
 
 /* set file name */
-$filename = "Monthly SSS Contribution Report";
+$filename = "SSS Contribution Report";
 /* output excel - filename, excel version (2003,2007) */
 $excel->output($filename,'2007');
 ?>

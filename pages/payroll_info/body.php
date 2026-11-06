@@ -51,6 +51,7 @@
 													<th>Cut-off Date</th>
 													<th>Last Modified</th>
 													<th>Posted</th>
+													<th>Working Days</th>
 												</thead>
 												<tbody>
 												</tbody>
@@ -77,6 +78,7 @@
                                                 <th>CTPA</th>
                                                 <th>Socio Eco. Allow </th>
                                                 <th>Allowance</th>
+                                                <th>Account Number</th>
                                                 <th>Action</th>
                                             </thead>
                                         </table>
@@ -109,7 +111,7 @@
 									<label class="col-form-label">Description</label>
 									<!-- <input type="select" class="form-control" name="cec_name"> -->
 									<select class="form-control" name="slct_description" required>
-										<option selected disabled>---</option>
+										<option selected disabled>Select One</option>
 										<option value="1">Daily</option>
 										<option value="2">Monthly</option>
 										<option value="4">JS/SS</option>
@@ -117,6 +119,8 @@
 										<option value="6">VL Conversion</option>
 										<option value="7">13th Month</option>
 										<option value="8">SL Conversion</option>
+										<option value="9">Bonus</option>
+										<option value="10">Gratuity Pay</option>
 									</select>
 								</div>
 			      			</div>
@@ -125,7 +129,7 @@
 									<label class="col-form-label">Cut-off</label>
 									<!-- <input type="select" class="form-control" name="cec_position"> -->
 									<select class="form-control" name="slct_cut_off" required>
-										<option selected disabled>---</option>
+										<option selected disabled>Select One</option>
 										<option value="1">First</option>
 										<option value="2">Last</option>
 									</select>
@@ -157,13 +161,25 @@
 								<div class="form-group">
 									<label for="slct_posted" class="col-form-label">Posted</label>
 									<select class="form-control"  name="slct_posted" required>
-										<option selected disabled>---</option>
+										<option selected disabled>Select One</option>
 										<option value="Y">Yes</option>
 										<option value="N">No</option>
 									</select>
 								</div>
 			      			</div>
 			      		</div>
+						<div class="row">
+							<div class="col-sm-6">
+							<label for="dt_cut_off_date" class="col-form-label">Working Days</label>
+							<select class="form-control" name="working_days" id="working_days" required>
+								<option selected disabled>Select One</option>
+								<option value="11">11</option>
+								<option value="12">12</option>
+								<option value="13">13</option>
+								<option value="14">14</option>
+							</select>
+							</div>
+						</div>
 			        </form>
 				</div>
 				<div class="modal-footer">
@@ -198,6 +214,8 @@
 										<option value="6">VL Conversion</option>
 										<option value="7">13th Month</option>
 										<option value="8">SL Conversion</option>
+										<option value="9">Bonus</option>
+										<option value="10">Gratuity Pay</option>
 									</select>
 								</div>
 			      			</div>
@@ -245,6 +263,19 @@
 								</div>
 			      			</div>
 			      		</div>
+
+						  <div class="row">
+							<div class="col-sm-6">
+							<label for="dt_cut_off_date" class="col-form-label">Working Days</label>
+							<select class="form-control" name="working_days" required>
+								<option selected disabled>Select One</option>
+								<option value="11">11</option>
+								<option value="12">12</option>
+								<option value="13">13</option>
+								<option value="14">14</option>
+							</select>
+							</div>
+						</div>
 			        </form>
 				</div>
 				<div class="modal-footer">
@@ -291,7 +322,8 @@
 		                              <th rowspan="3">SSS Premiums</th>
 		                              <th rowspan="3">Philhealth </th>
 		                              <th rowspan="3">Pag-ibig </th>
-		                              <th colspan="2">SSS Loans </th>
+		                              <!-- <th colspan="2">SSS Loans </th> -->
+		                              <th colspan="3">SSS Loans </th>
 		                              <th colspan="2">Pag-ibig Loans </th>
 		                              <th rowspan="3">HIPAR </th>
 		                              <th rowspan="3">Advances/Other Deductions </th>
@@ -322,6 +354,7 @@
 		                              <th colspan="2">Undertime </th>
 		                              <th rowspan="2">SSS Salary Loan </th>
 		                              <th rowspan="2">SSS Calamity Loan </th>
+		                              <th rowspan="2">SSS Condonation </th>
 		                              <th rowspan="2">Pag-ibig Salary Loan </th>
 		                              <th rowspan="2">Pag-ibig Calamity Loan </th>
 		                            </tr>
@@ -425,8 +458,8 @@
 		                              <th rowspan="3">SSS Premiums</th>
 		                              <th rowspan="3">Philhealth </th>
 		                              <th rowspan="3">Pag-ibig </th>
-		                              <th colspan="2">SSS Loans </th>
-		                              <th colspan="2">Pag-ibig Loans </th>
+		                              <th colspan="3">SSS Loans </th>
+		                              <th colspan="3">Pag-ibig Loans </th>
 		                              <th rowspan="3">HIPAR </th>
 		                              <th rowspan="3">Advances/Other Deductions </th>
 		                              <th rowspan="3">Tax Adjustments </th>
@@ -456,8 +489,10 @@
 		                              <th colspan="2">Undertime </th>
 		                              <th rowspan="2">SSS Salary Loan </th>
 		                              <th rowspan="2">SSS Calamity Loan </th>
+		                              <th rowspan="2">SSS Condonation </th>
 		                              <th rowspan="2">Pag-ibig Salary Loan </th>
 		                              <th rowspan="2">Pag-ibig Calamity Loan </th>
+		                              <th rowspan="2">Pag-ibig Safe Loan </th>
 		                            </tr>
 
 		                            <tr style="text-align:center;font-size:70%;">
@@ -764,6 +799,7 @@
 						$('#frm_update_payroll_data input[name="dt_end_date"]').val(data['EndingDate'][i]);
 						$('#frm_update_payroll_data input[name="dt_cut_off_date"]').val(data['CutOffDate'][i]);
 						$('#frm_update_payroll_data select[name="slct_posted"]').val(data['Posted'][i]);
+						$('#frm_update_payroll_data select[name="working_days"]').val(data['WorkingDays'][i]);
 					}
 				},
 				error:function (data){
@@ -1052,6 +1088,36 @@
 			});
 		}
 
+		/**
+		 * added on 01-02-2025
+		 */
+		function getWorkingDays(element){
+			let result = '<option value="0" disabled selected>Select One</option>';
+			var data = {
+				"action" : "get_working_days",
+			}
+			var data = $.param(data)
+			$.ajax({
+				type: "POST",
+				url: handler_payroll_info,
+				data: data,
+				dataType: "json",
+				success: function (data) {
+					console.log('data ',data);
+					for(var i=0;i<data['ctr'];i++){
+						result += `<option value="${data['working_days'][i]}">
+										${data['working_days'][i]}
+									</option>`;
+					}
+					element.html(result);
+				},
+				error:function (data){
+					console.log('error: '+JSON.stringify(data));
+					alert('Something is wrong, please reload the page. If error persists, kindly contact ISS at local 205. Thank you!'); 
+				}
+			});
+		}
+		getWorkingDays($('#working_days'))
 
 	}); //end
 </script>

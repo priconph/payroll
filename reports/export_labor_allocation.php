@@ -83,18 +83,30 @@ while($row = mysqli_fetch_array($resultEmployeeInfo)){
 	);
 	array_push($returnEmployeeInfo, $EmployeeInfoArray);
 }
+
 // echo json_encode($returnEmployeeInfo);
 // exit();
+
+// CHAN - JAN-06-2026
+$yearToday = date('Y');
+if ($selectMonth == '12' && $selectCutoff == '2') {
+    $year = $yearToday - 1;
+}else{
+	$year = $yearToday;
+}
 
 $array_fields 	= 	array('*');
 $table 	   		= 	'tbl_payroll_info a';
 $joins 	   		=	'INNER JOIN tbl_payroll_info_data b 
 						ON b.fkid_payroll_info = a.id
 					INNER JOIN tbl_working_days';
+					
 $sql_where 		= 	'WHERE a.description ='.$selectSalaryType.'
 						AND a.cut_off ='.$selectCutoff.'	
 						AND MONTH(a.date_cut_off)='.$selectMonth.'
-					';
+						AND YEAR(a.date_cut_off)='.$year.'
+						GROUP BY b.employee_no
+						';
 $sql_order 		= 	'';
 $sql_limit 		= 	'';
 $payrollInfoData 		= RAPID::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
@@ -129,9 +141,16 @@ while($row = mysqli_fetch_array($payrollInfoData)){
 		'working_days'		=> $row['working_days'],
 	);
 	array_push($payrollInfoDataArray, $tempEmployeeInfoArray);
+	// exit();
 }
-// echo json_encode($payrollInfoDataArray);
+
+// echo json_encode(count($payrollInfoDataArray));
 // exit();
+
+// for ($i=0; $i <count($payrollInfoDataArray); $i++) { 
+// 	# code...
+// }
+
 
 $overAllProductLineArray = array();
 $overAllPayrollDataInfoArray = array();
@@ -259,6 +278,9 @@ for ($i=0; $i < count($productLine); $i++) {
 	}
 	array_push($overAllDataResult,$arrayTemporaryComputedData);
 }
+
+// echo json_encode (($overAllPayrollDataInfoArray));
+// exit();
 
 /**
  * Excel

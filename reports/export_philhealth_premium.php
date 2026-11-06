@@ -24,32 +24,71 @@ function get_philhealth_premium(){
 	require_once ('../class/payroll_oop.php');
 	$PhilHealthCutOff   = $_GET['PhilHealthCutOffType'];
 	$selectMonth    = $_GET['selectMonth'];
-	
-	$return             = $_POST;
-	$result             = '';
-	$array_fields       = array('ph_premium','fkid_payroll_info','employee_no','b.date_end');
-	$table              = 'tbl_payroll_info_data a';
-	$joins              = 'INNER JOIN tbl_payroll_info b
-							ON b.id = a.fkid_payroll_info
-							';
-	// $sql_where          = 'WHERE a.fkid_payroll_info = b.id
-	// 						AND MONTH(b.date_cut_off)='.$selectMonth.'AND b.cut_off='.$PhilHealthCutOff.'';
-	$sql_where          = 'WHERE b.cut_off= '.$PhilHealthCutOff.' AND MONTH(b.date_cut_off)= '.$selectMonth.' ';
-	$sql_order          = '';
-	$sql_limit          = '';
-	$result             = PAYROLL::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
-	// $result             = PAYROLL::getInstance()->select_query_script($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
-	// return $result;
-	$ctr = 0;
-	$eeshare = 0;
-	while($row = mysqli_fetch_array($result)){
-		$return ['ph_premium'][] = $row ['ph_premium'];
-		$return ['employee_no'][] = $row ['employee_no'];
-		$return ['date_end'][] = $row ['date_end'];
-		// $return ['employee_no'][] = $row ['employee_no'];
-		
-		$ctr++;
+
+	if($PhilHealthCutOff == 2 && $selectMonth == 12){
+		$year = date('Y') - 1;
+		$return             = $_POST;
+		$result             = '';
+		$array_fields       = array('ph_premium','fkid_payroll_info','employee_no','b.date_end');
+		$table              = 'tbl_payroll_info_data a';
+		$joins              = 'INNER JOIN tbl_payroll_info b
+								ON b.id = a.fkid_payroll_info
+								';
+		// $sql_where          = 'WHERE a.fkid_payroll_info = b.id
+		// 						AND MONTH(b.date_cut_off)='.$selectMonth.'AND b.cut_off='.$PhilHealthCutOff.'';
+		$sql_where          = 'WHERE b.cut_off= '.$PhilHealthCutOff.' 
+								AND MONTH(b.date_cut_off)= '.$selectMonth.' 
+								AND YEAR(b.date_cut_off)='.$year.'
+								';
+								// AND YEAR(b.date_cut_off)= 2024
+								$sql_order          = '';
+		$sql_limit          = '';
+		$result             = PAYROLL::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
+		// $result             = PAYROLL::getInstance()->select_query_script($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
+		// return $result;
+		$ctr = 0;
+		$eeshare = 0;
+		while($row = mysqli_fetch_array($result)){
+			$return ['ph_premium'][] = $row ['ph_premium'];
+			$return ['employee_no'][] = $row ['employee_no'];
+			$return ['date_end'][] = $row ['date_end'];
+			// $return ['employee_no'][] = $row ['employee_no'];
+			
+			$ctr++;
+		}
+	}else{
+		$return             = $_POST;
+		$result             = '';
+		$array_fields       = array('ph_premium','fkid_payroll_info','employee_no','b.date_end');
+		$table              = 'tbl_payroll_info_data a';
+		$joins              = 'INNER JOIN tbl_payroll_info b
+								ON b.id = a.fkid_payroll_info
+								';
+		// $sql_where          = 'WHERE a.fkid_payroll_info = b.id
+		// 						AND MONTH(b.date_cut_off)='.$selectMonth.'AND b.cut_off='.$PhilHealthCutOff.'';
+		$sql_where          = 'WHERE b.cut_off= '.$PhilHealthCutOff.' 
+								AND MONTH(b.date_cut_off)= '.$selectMonth.' 
+								AND YEAR(b.date_cut_off)='.date('Y').'
+								';
+								// AND YEAR(b.date_cut_off)= 2024
+								$sql_order          = '';
+		$sql_limit          = '';
+		$result             = PAYROLL::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
+		// $result             = PAYROLL::getInstance()->select_query_script($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
+		// return $result;
+		$ctr = 0;
+		$eeshare = 0;
+		while($row = mysqli_fetch_array($result)){
+			$return ['ph_premium'][] = $row ['ph_premium'];
+			$return ['employee_no'][] = $row ['employee_no'];
+			$return ['date_end'][] = $row ['date_end'];
+			// $return ['employee_no'][] = $row ['employee_no'];
+			
+			$ctr++;
+		}
 	}
+	
+	
 	// $return['ctr']  = $ctr;
 	return $return;
 }

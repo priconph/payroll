@@ -8,8 +8,7 @@ error_reporting(E_ALL);
  */
 
 
-//  echo json_encode($SSSPremiumCutOff);
-// exit();
+
 
 $get_sss = get_sss_premium();
 $get_hris_data = get_hris_info();
@@ -29,34 +28,84 @@ function get_sss_premium(){
 	$SSSPremiumCutOff   = $_GET['SSSPremiumCutOffType'];
     $selectMonth    = $_GET['SSSPremiumSelMonth'];
 
+	// echo json_encode($selectMonth);
+	// exit();
 
-	require_once ('../class/payroll_oop.php');
-	$return             = $_POST;
-	$result             = '';
-	$array_fields       = array('sss_premium','fkid_payroll_info','employee_no','b.date_end');
-	$table              = 'tbl_payroll_info_data a';
-	$joins              = 'INNER JOIN tbl_payroll_info b
-							ON b.id = a.fkid_payroll_info
-							';
-	// $sql_where          = 'WHERE a.fkid_payroll_info = b.id
-	// 						AND b.cut_off ='.$SSSPremiumCutOff.'';
-	$sql_where          = 'WHERE a.fkid_payroll_info = b.id
-							AND b.cut_off ='.$SSSPremiumCutOff.' AND MONTH(b.date_cut_off)= '.$selectMonth;
-	$sql_order          = '';
-	$sql_limit          = '';
-	$result             = PAYROLL::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
-	// $result             = PAYROLL::getInstance()->select_query_script($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
-	// return $result;
-	$ctr = 0;
-	$eeshare = 0;
-	while($row = mysqli_fetch_array($result)){
-		$return ['sss_premium'][] = $row ['sss_premium'];
-		$return ['employee_no'][] = $row ['employee_no'];
-		$return ['date_end'][] = $row ['date_end'];
-		// $return ['employee_no'][] = $row ['employee_no'];
-		
-		$ctr++;
+	if($SSSPremiumCutOff == 2 && $selectMonth == 12){
+		$year = date('Y') - 1;
+		require_once ('../class/payroll_oop.php');
+		$return             = $_POST;
+		$result             = '';
+		$array_fields       = array('sss_premium','fkid_payroll_info','employee_no','b.date_end');
+		$table              = 'tbl_payroll_info_data as a';
+		$joins              = 'INNER JOIN tbl_payroll_info as b
+								ON b.id = a.fkid_payroll_info
+								';
+		$sql_where          = 'WHERE a.fkid_payroll_info = b.id
+								AND b.cut_off ='.$SSSPremiumCutOff.' 
+								AND MONTH(b.date_cut_off)= '.$selectMonth.'
+								AND YEAR(b.date_cut_off)='.$year.'
+								';
+								// AND YEAR(b.date_cut_off)= 2024
+
+								
+		// $sql_where          = 'WHERE a.fkid_payroll_info = b.id
+		// 						AND b.cut_off ='.$SSSPremiumCutOff.' 
+		// 						AND MONTH(b.date_cut_off)= '.$selectMonth;
+
+		$sql_order          = '';
+		$sql_limit          = '';
+		$result             = PAYROLL::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
+		// $result             = PAYROLL::getInstance()->select_query_script($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
+		// return $result;
+		$ctr = 0;
+		$eeshare = 0;
+		while($row = mysqli_fetch_array($result)){
+			$return ['sss_premium'][] = $row ['sss_premium'];
+			$return ['employee_no'][] = $row ['employee_no'];
+			$return ['date_end'][] = $row ['date_end'];
+			// $return ['employee_no'][] = $row ['employee_no'];
+			
+			$ctr++;
+		}
+	}else{
+		require_once ('../class/payroll_oop.php');
+		$return             = $_POST;
+		$result             = '';
+		$array_fields       = array('sss_premium','fkid_payroll_info','employee_no','b.date_end');
+		$table              = 'tbl_payroll_info_data as a';
+		$joins              = 'INNER JOIN tbl_payroll_info as b
+								ON b.id = a.fkid_payroll_info
+								';
+		$sql_where          = 'WHERE a.fkid_payroll_info = b.id
+								AND b.cut_off ='.$SSSPremiumCutOff.' 
+								AND MONTH(b.date_cut_off)= '.$selectMonth.'
+								AND YEAR(b.date_cut_off)='.date('Y').'
+								';
+								// AND YEAR(b.date_cut_off)= 2024
+
+								
+		// $sql_where          = 'WHERE a.fkid_payroll_info = b.id
+		// 						AND b.cut_off ='.$SSSPremiumCutOff.' 
+		// 						AND MONTH(b.date_cut_off)= '.$selectMonth;
+
+		$sql_order          = '';
+		$sql_limit          = '';
+		$result             = PAYROLL::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
+		// $result             = PAYROLL::getInstance()->select_query_script($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
+		// return $result;
+		$ctr = 0;
+		$eeshare = 0;
+		while($row = mysqli_fetch_array($result)){
+			$return ['sss_premium'][] = $row ['sss_premium'];
+			$return ['employee_no'][] = $row ['employee_no'];
+			$return ['date_end'][] = $row ['date_end'];
+			// $return ['employee_no'][] = $row ['employee_no'];
+			
+			$ctr++;
+		}
 	}
+
 	// $return['ctr']  = $ctr;
 	return $return;
 }
@@ -78,13 +127,13 @@ function get_hris_info(){
 	$eeshare = 0;
 	while($row = mysqli_fetch_array($result)){
 		$return['EmpNo'][] 				= $row['EmpNo'];
-		$return['LastName'][] 				= $row['LastName'];
-		$return['FirstName'][] 				= $row['FirstName'];
-		$return['MiddleName'][] 				= $row['MiddleName'];
+		$return['LastName'][] 			= $row['LastName'];
+		$return['FirstName'][] 			= $row['FirstName'];
+		$return['MiddleName'][] 		= $row['MiddleName'];
 		$return['SSN'][] 				= $row['SSN'];
 		$return['TIN'][] 				= $row['TIN'];
-		$return['DateHired'][] 				= $row['DateHired'];
-		$return['PhilHealth'][] 				= $row['PhilHealth'];
+		$return['DateHired'][] 			= $row['DateHired'];
+		$return['PhilHealth'][] 		= $row['PhilHealth'];
 		
 		// $ctr++;
 	}

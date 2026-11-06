@@ -64,7 +64,7 @@
 <link rel="stylesheet" href="../../media/toastr/css/notifIt.css" />
 <script type="text/javascript" language="javascript" src="../../media/toastr/css/notifIt.js"></script>
 <script type="text/javascript" language="javascript" src="../../media/toastr/css/notifIt.min.js"></script>
-<script type="text/javascript" language="javascript" src="../js/moment.js"></script>
+<!-- <script type="text/javascript" language="javascript" src="../js/moment.js"></script> -->
 
 <!-- <link rel="stylesheet" href="css/css/notifIt.css" />
 <script src="css/css/notifIt.js"></script>

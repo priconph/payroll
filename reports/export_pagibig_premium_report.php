@@ -71,7 +71,10 @@ function get_payroll_details(){
     $table              = 'tbl_payroll_info a';
     $joins              = 'INNER JOIN tbl_payroll_info_data b ON b.fkid_payroll_info = a.id
                             ';
-    $sql_where          = 'WHERE a.description= '.$salaryType.' AND a.cut_off= '.$selectCutoff.' AND MONTH(a.date_cut_off)= '.$selectMonth.' ';
+    $sql_where          = 'WHERE a.description= '.$salaryType.' AND a.cut_off= '.$selectCutoff.' AND MONTH(a.date_cut_off)= '.$selectMonth.' 
+                            AND YEAR(a.date_cut_off)= '.date('Y').'
+                            ';
+    // AND YEAR(a.date_cut_off)='.date('Y').'
     $sql_order          = '';
     $sql_limit          = '';
     $result             = PAYROLL::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);

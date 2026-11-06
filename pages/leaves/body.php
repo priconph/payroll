@@ -31,8 +31,9 @@
 									<div class="col-sm-3">
 											<button class="btn btn-primary fa" id="btnImportData" data-toggle="modal"><i class="fa fa-plus"></i> Import Data</button><br><br>
 									</div>
-									<div class="col-sm-9">
-										<button class="btn btn-primary fa pull-right" id="btnLeaves" data-toggle="modal" data-target="#mdlTaxes"><i class="fa fa-plus"></i> New</button><br><br>
+									<div class="col-sm-9" style="display: flex; justify-content: flex-end;">
+										<button class="btn btn-danger" style="margin-right: 5px" id="btnDelete"><i class="fa fa-minus"></i> Delete All</button>
+										<button class="btn btn-primary" id="btnLeaves" data-toggle="modal" data-target="#mdlTaxes"><i class="fa fa-plus"></i> New</button>
 									</div>
 								</div>
 								<div class="table-responsive">
@@ -93,8 +94,8 @@
 	Create Modal
 ---------------------->
 <div class="modal fade" id="mdl_leaves" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-	<div class="modal-dialog" style="margin-top:0%;margin-left: 45%;">
-		<div class="modal-content" style="width:50%">
+	<div class="modal-dialog modal-dialog-sm" >
+		<div class="modal-content">
 			<div class="modal-header" style="overflow-y:auto;">
 				New Leave Info
 			</div>
@@ -248,6 +249,7 @@
 				'action' : 'create_leaves'
 			};
 			let data = $.param(action) +'&'+ $(this).serialize();
+			console.log('data ', data);
 			$.ajax({
 				type: "POST",
 				url: handler_leaves,
@@ -280,6 +282,35 @@
 			readLeavesInfo(pkid);
 
 			$('#mdl_update_leaves').modal('show');
+		});
+
+		$('#btnDelete').click(function (e) { 
+			e.preventDefault();
+			if (confirm('Are you sure you want to delete?')) {
+				let action = {
+					'action' : 'delete_leaves'
+				};
+				let data = $.param(action);
+				$.ajax({
+					type: "POST",
+					url: handler_leaves,
+					data: data,
+					dataType: "json",
+					success: function (response) {
+						if(response['result']=="success"){
+							dt_leaves_info.draw();
+							notif_success("Deleted Successfully!");
+						}else{
+							alert('Something is wrong, please reload the page. If error persists, kindly contact ISS at local 205. Thank you!');
+						}
+					},
+					error:function(response){
+						console.log('error: '+response);
+						alert('Something is wrong, please reload the page. If error persists, kindly contact ISS at local 205. Thank you!'); 
+					}
+				});
+				
+			}
 		});
 		
 		$('#frm_update_leaves').submit(function (e) { 

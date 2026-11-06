@@ -24,6 +24,7 @@
                 'date_end',
                 'date_cut_off',
                 'posted',
+                'working_days',
                 'created_at',
                 'updated_at',
 				);
@@ -198,7 +199,7 @@
 	 */
 	$output = array(
 		"sEcho" => intval($_GET['sEcho']),
-		"iTotalRecords" => $iTotal,
+		"iTotalRecords" => $iTotla,
 		"iTotalDisplayRecords" => $iFilteredTotal,
 		"aaData" => array()
 	);
@@ -212,7 +213,7 @@
         	<button type="button" class="btn btn-primary fa fa-edit payroll-data-edit" id="btn_edit" data-id="'.$aRow['id'].'"> Edit Payroll Data</button> <button type="button" class="btn btn-warning fa fa-eye payroll-details-compute" id="btn_payroll_details" data-id="'.$aRow['id'].'" data-desc="'.$aRow['description'].'" data-cutoff="'.$aRow['cut_off'].'" data-date-cutoff="'.$aRow['date_cut_off'].'"> Payroll Details</button></center>';
 
 
-
+		
 		if($aRow['description']==1){
 			$row[] ='Daily';
 		}else if($aRow['description']==2){
@@ -223,6 +224,16 @@
 			$row[] ='Rice Sub.';
 		}else if($aRow['description']==6){
 			$row[] ='VL Conversion';
+		}else if($aRow['description']==7){
+			$row[] ='13th Month';
+		}else if($aRow['description']==8){
+			$row[] ='SL Conversion';
+		}else if($aRow['description']==9){
+			$row[] ='Bonus';
+		}else if($aRow['description']==10){
+			$row[] ='Gratuity Pay';
+		}else{
+			$row[] ='---';
 		}
 
 		if($aRow['cut_off']==1){
@@ -241,6 +252,8 @@
 		}else if($aRow['posted']=='N'){
 			$row[] ='No';
 		}
+
+		$row[] = $aRow['working_days'];
 		
 		array_push($output['aaData'],$row);
 	}

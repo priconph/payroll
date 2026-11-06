@@ -130,7 +130,10 @@ $joins 	   		=	'INNER JOIN tbl_payroll_info b
 					ON b.id = a.fkid_payroll_info
 					';
 $sql_where 		= 	"WHERE a.fkid_payroll_info = b.id AND MONTH(b.date_cut_off)='$selectMonth' 
-					AND b.description= '$salaryType' AND b.cut_off= '$cutOff'";
+					AND b.description= '$salaryType' AND b.cut_off= '$cutOff'
+					AND YEAR(b.date_cut_off)=".date('Y')."
+					";
+					// AND YEAR(b.date_cut_off)= 2024
 $sql_order 		= 	'';
 $sql_limit 		= 	'';
 $resultPagibigLoan 		= RAPID::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);

@@ -14,6 +14,7 @@ if(is_ajax()) {
             case 'read_leaves_info'					: read_leaves_info(); 		break;
             case 'update_leaves'					: update_leaves(); 	        break;
             case 'import_leaves'					: import_leaves(); 	        break;
+            case 'delete_leaves'					: delete_leaves(); 	        break;
         }
     }
 }
@@ -24,14 +25,27 @@ function is_ajax() {
 
 
 function create_leaves(){
-
     try{
         require_once('../class/payroll_oop.php'); 
         $request = $_POST;
+
+        /**
+         * If Leave Code value is set to 1-BDL then set the amount to 1(to be considered as 1day)
+         * else the amount is default to whatever the user's defined value
+         * JD
+         */
+        $amount = $request["int_amount"];
+        if($request["slct_leave_code"] == 1){
+            $amount = 1;
+        }
+        
         $table = "tbl_leaves";
         $array_fields = array("emp_no","leave_code","amount","cut_off");
-        $array_values = array($request["txt_emp_no"],$request["slct_leave_code"],$request["int_amount"],
-                                $request["slct_cutoff"]
+        $array_values = array(
+                            $request["txt_emp_no"],
+                            $request["slct_leave_code"],
+                            $amount,
+                            $request["slct_cutoff"]
                         );
         $result = PAYROLL::getInstance()->insert_query($table,$array_fields,$array_values);
         $return['result'] = 'success';
@@ -87,9 +101,17 @@ function update_leaves(){
         $request 	= $_POST;
         $pkid 		= $request['data_id'];
         $table = "tbl_leaves";
-        $array_fields = array('updated_by',"emp_no","leave_code","amount","cut_off","updated_at");
-        $array_values = array($_SESSION['username'],$request["txt_emp_no"],$request["slct_leave_code"],$request["int_amount"],
-                                $request["slct_cutoff"],date('Y-m-d H:m:s')
+        $array_fields = array(
+                                "emp_no",
+                                "leave_code",
+                                "amount",
+                                "cut_off",
+                            );
+        $array_values = array(
+                                $request["txt_emp_no"],
+                                $request["slct_leave_code"],
+                                $request["int_amount"],
+                                $request["slct_cutoff"],
                         );
         $result = PAYROLL::getInstance()->update_query($table,$array_fields,$array_values,$pkid);
         
@@ -100,7 +122,22 @@ function update_leaves(){
         $error['has_error'] =  'Exception Error';
         echo json_encode($error);
     }
-	
+}
+
+function delete_leaves(){
+    // echo 'delete_leaves';
+    try{
+        require_once('../class/payroll_oop.php'); 
+        $table = "tbl_leaves";
+        $result = PAYROLL::getInstance()->delete_query($table);
+        
+        $return['result'] = 'success';
+        echo json_encode($return);
+    }catch(Exception $err){
+        $error['error_message'] =  $err;
+        $error['has_error'] =  'Exception Error';
+        echo json_encode($error);
+    }
 }
 
 

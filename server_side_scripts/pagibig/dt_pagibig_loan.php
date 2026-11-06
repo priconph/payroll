@@ -20,6 +20,7 @@
                 'emp_no',
                 'loan_amount',
                 'calamity_loan_amount',
+                'safe_loan_amount',
                 'logdel',
 				);
 	
@@ -203,6 +204,7 @@
 		$row[]	= $aRow['emp_no'];
 		$row[]	= number_format($aRow['loan_amount'],2);
 		$row[]	= number_format($aRow['calamity_loan_amount'],2);
+		$row[]	= number_format($aRow['safe_loan_amount'],2);
         $row[] 	= '	<center>
 						<button type="button" class="btn btn-info fa fa-eye data-view" id="btn_view" data-id="'.$aRow['id'].'"> View</button>
 						<button type="button" class="btn btn-primary fa fa-edit data-edit" id="btn_edit" style="margin-top: 5px;" data-id="'.$aRow['id'].'"> Edit</button>

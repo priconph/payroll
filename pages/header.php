@@ -23,7 +23,7 @@
 	<div id="loading_overlay">
 		<div id="loading_overlay_center">
 			<center>
-				<img src="images/loader.gif"><br />	
+				<!-- <img src="images/loader.gif"><br />	 -->
 				<h2>Loading Module...</h2>
 			</center>
 		</div>
@@ -97,6 +97,7 @@
 		});
 		
 		$('.sidebar li').click(function(){
+			console.log('ID: ', this.id);
 			fn_get_page(this.id);
 		});
 		
@@ -120,10 +121,10 @@
 				data 	: data,
 				url 	: handler,
 				success	:function(result){
-					console.log(result);
+					console.log('result:', result);
 					window.location.href = "index.php?page="+result['page'];
 				},error	: function(result){
-					console.log(result);
+					console.log('result:', result);
 				}
 			});
 		}
@@ -139,4 +140,4 @@
 			}
 		}
 	</script>
-	<script src="js/common_functions.js?0987654" type="text/javascript"></script>
+	<script src="js/common_functions.js?456456456" type="text/javascript"></script>

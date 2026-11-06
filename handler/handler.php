@@ -40,6 +40,7 @@
 			case "li_configuration" 	: $return['page'] = "configuration"; break;
 			default						: $return['page'] = "";
 		}
+
 		echo json_encode($return);
 	}
 	

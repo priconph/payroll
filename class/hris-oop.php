@@ -66,7 +66,10 @@ class HRIS extends mysqli
 		return $this->query($query);
 	}
 
-
+	public function active_user($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit){
+		$query = "SELECT SQL_CALC_FOUND_ROWS " . implode(", ", $array_fields) . " FROM {$table} {$joins} {$sql_where} {$sql_order} {$sql_limit};";
+		return $this->query($query);
+	}
 
 	public function fetch_all_hris_info(){
 		// $query = "SELECT SQL_CALC_FOUND_ROWS " . implode(", ", $array_fields) . " FROM {$table} {$joins} {$sql_where} {$sql_limit};";

@@ -11,6 +11,7 @@
                             <ul class="nav nav-tabs" role="tablist">
                                 <li role="presentation" class="active"><a href="#sss_loan" aria-controls="sss_loan" role="tab" data-toggle="tab"> SSS Loan</a></li>
                                 <li role="presentation"><a href="#sss_calamity_loan" aria-controls="sss_calamity_loan" role="tab" data-toggle="tab"> SSS Calamity Loan</a></li>
+                                <li role="presentation"><a href="#sss_condonation" aria-controls="sss_condonation" role="tab" data-toggle="tab"> SSS Condonation</a></li>
                             </ul>
 
                             <!-- Tab panes -->
@@ -57,6 +58,27 @@
                                         </table>
                                     </div>
                                 </div>
+                                <div role="tabpanel" class="tab-pane" id="sss_condonation">
+									<div class="col-sm-3">
+										<button class="btn btn-primary fa pull-left" id="btnImportSSSCondonation" data-toggle="modal" data-target="#SSSCondonationImportModal"><i class="fa fa-upload"></i> Import Data</button>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <button class="btn btn-success fa pull-right" id="btnCreateCondonation"><i class="fa fa-plus"></i> New</button><br><br>
+                                    </div>
+									<br>
+                                        <br>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered table-condensed table-hover" id="tblSSSCondonationId">
+                                            <thead>
+                                                <th>Employee No.</th>
+                                                <th>Employee Name</th>
+                                                <th>SSS No.</th>
+                                                <th>Amount</th>
+                                                <th>Action</th>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
                                 
                             </div>
                         </div>
@@ -84,7 +106,7 @@
 					<div class="row" style="margin-top:-10px;">
 						<div class="col-sm-12">
 							<div class="form-group">
-								<input type="" class="form-control"  name="data_id">
+								<input type="" class="form-control" style="display: none"  name="data_id">
 							</div>
 						</div>
 					</div>
@@ -137,7 +159,7 @@
 					<div class="row" style="margin-top:-10px;">
 						<div class="col-sm-12">
 							<div class="form-group">
-								<input type="" class="form-control"  name="data_id">
+								<input type="" class="form-control" style="display: none"  name="data_id">
 							</div>
 						</div>
 					</div>
@@ -205,6 +227,88 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
+	<!---------------------
+		SSS Condonation Import Modal
+	---------------------->
+    <div class="modal fade" tabindex="-1" role="dialog" id="SSSCondonationImportModal">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"><i class="fa fa-question-circle-o"></i> System Confirmation</h4>
+            </div>
+                <form id="formImportSSSCondonation" method="" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <!-- <label class="col-md-4 control-label">Choose CSV File</label>
+                    <input type="file" name="oem_file" id="fileOEM" accept=".csv"> -->
+                    <div class="form-group">
+                        <label for="file">Choose CSV File</label>
+                        <input type="file" name="file" class="form-control-file" id="file">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary fa fa-upload" name="import" id="btnImportSSSCondonation"> Import</button>
+                    <button type="button" class="btn btn-default fa fa-close" data-dismiss="modal" id="btn_close"> Close</button>
+                </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+	<!---------------------
+		SSS Condonation Modal
+	---------------------->
+	<div class="modal fade" id="mdl_save_sss_condonation" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog" style="margin-top:0%;margin-left: 45%;">
+			<div class="modal-content" style="width:50%">
+				<div class="modal-header" style="overflow-y:auto;">
+					SSS Calamity Loan Info
+				</div>
+				<form id="frm_save_sss_condonation">
+					<div class="modal-body" style="overflow-y:auto;">
+						<div class="row" style="margin-top:-10px;">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<input type="" class="form-control" style="display: none" name="data_id">
+								</div>
+							</div>
+						</div>
+						<div class="row" style="margin-top:-10px;">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="txt_emp_no" class="col-form-label">Employee Number</label>
+									<select type="text" class="form-control"  name="txt_emp_no" id="txt_emp_no" style="width:100%;" required>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row" style="margin-top:-10px;">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="txt_sss_no" class="col-form-label">SSS No.</label>
+									<input type="text" class="form-control"  name="txt_sss_no" required>
+								</div>
+							</div>
+						</div>
+						<div class="row" style="margin-top:-10px;">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="int_amount" class="col-form-label">Amount</label>
+									<input type="number" class="form-control"  name="int_amount" min="0" step="0.01" pattern="^\d*(\.\d{0,2})?$" required>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<!-- <button type="submit" class="btn btn-primary">Save</button> -->
+						<button type="submit" class="btn btn-primary" id="btnSave"><i class="fa fa-save" id="iconsSave"></i> Save</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
     <!-- Modal for system message -->
     <div class="modal fade" tabindex="-1" role="dialog" id="SSSCalamityLoanImportModal">
         <div class="modal-dialog modal-sm" role="document">
@@ -238,6 +342,9 @@ $(document).ready(function(){
 		var $iconId		= $("#frm_save_loan #iconsSave");
         var $buttonIdClmtyLoan 			= $('#frm_save_sss_calamity_loan #btnSave');
 		var $iconIdClmtyLoan				= $("#frm_save_sss_calamity_loan #iconsSave");
+
+        var $buttonIdCondonation 			= $('#frm_save_sss_condonation #btnSave');
+		var $iconIdCondonation				= $("#frm_save_sss_condonation #iconsSave");
 
 		function readSssLoan(pkid){
 			// console.log(pkid);
@@ -307,9 +414,10 @@ $(document).ready(function(){
 				$('#tblSSSCalamityLoanId').attr('style','width:100%;');
 			}
 		});
-/*
-	SSS Loan
-*/	
+
+		/*
+			SSS Loan
+		*/	
         $('#btnCreateLoan').click(function () { 
 			$('#mdl_save_loan').modal('show');
 			// dd_hris_all_list
@@ -358,9 +466,10 @@ $(document).ready(function(){
 
 			$('#mdl_save_loan').modal('show');
 		});
-/*
-	SSS Calamity Loan
-*/		
+
+		/*
+			SSS Calamity Loan
+		*/		
 		$('#btnCreateCalamityLoan').click(function () { 
 			$('#mdl_save_sss_calamity_loan').modal('show');
 			$('#frm_save_sss_calamity_loan')[0].reset();
@@ -368,7 +477,7 @@ $(document).ready(function(){
 			buttonEnabledClass($buttonIdClmtyLoan,$iconIdClmtyLoan);
 			re_initialize_select2_server_side('#mdl_save_sss_calamity_loan #txt_emp_no','#mdl_save_sss_calamity_loan #frm_save_sss_calamity_loan',[],"server_side_scripts/dropdown/common/dd_hris_all_list.php");
 		});
-		
+
 		$('#frm_save_sss_calamity_loan').submit(function (e) { 
 			e.preventDefault();
 			let action = {
@@ -406,9 +515,136 @@ $(document).ready(function(){
 			buttonEnabledClass($buttonIdClmtyLoan,$iconIdClmtyLoan);
 			$('#mdl_save_sss_calamity_loan').modal('show');
 		});
-/*
-	SSS Import
-*/		
+
+		/**
+		 * added by whyRainbowDoesntHaveBlack
+		 */
+        var datatableSSSCondonation = $('#tblSSSCondonationId').DataTable({
+			"aaSorting"	 : [],
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "./server_side_scripts/sss/dt_sss_condonation.php",
+			"drawCallback": function( settings ) {
+				$('#tblSSSCondonationId').attr('style','width:100%;');
+			}
+		});
+		
+		/**
+		 * added by whyRainbowDoesntHaveBlack
+		 */
+		$('#btnCreateCondonation').click(function () { 
+			$('#mdl_save_sss_condonation').modal('show');
+			$('#frm_save_sss_condonation')[0].reset();
+			$('#frm_save_sss_condonation #txt_emp_no').val('');
+			buttonEnabledClass($buttonIdCondonation,$iconIdCondonation);
+			re_initialize_select2_server_side('#mdl_save_sss_condonation #txt_emp_no','#mdl_save_sss_condonation #frm_save_sss_condonation',[],"server_side_scripts/dropdown/common/dd_hris_all_list.php");
+		});
+
+		/**
+		 * added by whyRainbowDoesntHaveBlack
+		 */
+		$('#frm_save_sss_condonation').submit(function (e) { 
+			e.preventDefault();
+			let action = {
+				'action' : 'save_sss_condonation'
+			};
+			let data = $.param(action) +'&'+ $(this).serialize();
+			$.ajax({
+				type: "POST",
+				url: sss_handler,
+				data: data,
+				dataType: "json",
+				beforeSend: function(){
+					buttonDisabledClass($buttonIdCondonation,$iconIdCondonation);
+				},success: (response) => {
+					console.log(response);
+					if(response['result']=="success"){
+						notif_success("Updated Successfully");
+						buttonEnabledClass($buttonIdCondonation,$iconIdCondonation);
+						$('#mdl_save_sss_condonation').modal('hide');
+						datatableSSSCondonation.draw();
+					}else{
+                        buttonDisabledClass($buttonIdCondonation,$iconIdCondonation);
+						notif_error('Error Found! This employee number is already exist');
+					}
+				},error: (err) =>{
+					notif_error('Error Found! '+err+' Please contact Local 205/208');
+				}
+			});
+		});
+
+		/**
+		 * added by whyRainbowDoesntHaveBlack
+		 */
+		$('#tblSSSCondonationId').on('click', '.btn_edit', function () {
+			let pkid = $(this).attr('data-id');
+
+			readSssCondonation(pkid);
+			buttonEnabledClass($buttonIdCondonation,$iconIdCondonation);
+			$('#mdl_save_sss_condonation').modal('show');
+		});
+		
+		/**
+		 * added by whyRainbowDoesntHaveBlack
+		 */
+		function readSssCondonation(pkid){
+			let array_data = {
+				'action' : 'read_sss_condonation',
+				'pkid'	 : pkid
+			};
+			let data = $.param(array_data);
+			$.ajax({
+				type: "POST",
+				url: sss_handler,
+				data: data,
+				dataType:  "json",
+				success: function (response) {
+					// console.log(response);
+					$('#frm_save_sss_condonation input[name="data_id"]').val(response['pkid']);
+					$('#frm_save_sss_condonation input[name="txt_sss_no"]').val(response['sss_no']);
+					$('#frm_save_sss_condonation input[name="int_amount"]').val(response['charge_amount']);
+					assign_value_select2('#frm_save_sss_condonation #txt_emp_no',response['emp_no'][0]);
+					re_initialize_select2_server_side('#mdl_save_sss_condonation #txt_emp_no','#mdl_save_sss_condonation #frm_save_sss_condonation',[],"server_side_scripts/dropdown/common/dd_hris_all_list.php");
+				}
+			});
+		}
+		
+		/**
+		 * added by whyRainbowDoesntHaveBlack
+		 */
+		$('#formImportSSSCondonation').submit(function(e){
+			e.preventDefault();
+			let serialize_data = new FormData(this);
+			serialize_data.append('action',"import_sss_condonation");
+			console.log('object ', serialize_data);
+			$.ajax({
+				url: './handler/sss_handler.php',
+				type:"post",
+				data: serialize_data,
+				dataType:'json',
+                cache: false,
+				contentType:false,
+				processData:false,
+				beforeSend: function(){
+					$('#btnImportSSSLoan').prop('disabled', true);
+				},
+				success:function(data)
+				{
+					$('#SSSCondonationImportModal').modal('hide');
+					$('#btnImportSSSCondonation').prop('disabled', false);
+					$('#formImportSSSCondonation')[0].reset();
+					datatableSSSCondonation.ajax.reload();
+
+				},
+				error: function(data, xhr, status){
+                    console.log('Data: ' + data + "\n" + "XHR: " + xhr + "\n" + "Status: " + status);
+                }
+			});
+		});
+
+		/*
+			SSS Import
+		*/		
 		$('#formImportSSSLoan').submit(function(e){
 			e.preventDefault();
 			let serialize_data = new FormData(this);

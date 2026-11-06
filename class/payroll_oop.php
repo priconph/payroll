@@ -125,13 +125,35 @@ class PAYROLL extends mysqli
     }
     /* IMPORT TAXES */
     public function insert_taxes_import($data){
-    $query = "INSERT INTO tbl_taxes (emp_no,salary_adjustments,other_earnings,advances_other_deductions,tax_adjustments) 
+    $query = "INSERT INTO tbl_taxes (emp_no,salary_adjustments,other_earnings,advances_other_deductions,tax_adjustments,type_of_earning) 
             VALUES (
                 '".$data[0]."',
                 '".$data[1]."',
                 '".$data[2]."',
                 '".$data[3]."',
-                '".$data[4]."'
+                '".$data[4]."',
+                '".$data[5]."'
+            );";
+        /* if the field type is int/number, do not put a '' to the values */
+		$this->query($query);
+		return "New record has been saved";
+    }
+
+    /**
+     * Import Annual Tax YTD
+     * 04-18-2024
+     */
+    public function insert_annual_tax_ytd($data){
+        // print_r($data);
+        // return;
+        $query = "INSERT INTO tbl_annual_tax (emp_no,gross_income_ytd,forecast_earnings,less_ytd_tax_exempt,yt_tax_withheld,leaves_taxes) 
+            VALUES (
+                '".$data[0]."',
+                '".$data[1]."',
+                '".$data[2]."',
+                '".$data[3]."',
+                '".$data[4]."',
+                '".$data[5]."'
             );";
         /* if the field type is int/number, do not put a '' to the values */
 		$this->query($query);
@@ -155,11 +177,12 @@ class PAYROLL extends mysqli
 
     public function insert_pagibig_loan_import($data){
     /* NOTE: this query accept logdel but not accept the id column because it sets as auto increment */
-    $query = "INSERT INTO tbl_pagibig_loan (emp_no,loan_amount,calamity_loan_amount) 
+    $query = "INSERT INTO tbl_pagibig_loan (emp_no,loan_amount,calamity_loan_amount,safe_loan_amount) 
             VALUES(
                 '".$data[0]."',
                 '".$data[1]."',
-                '".$data[2]."'
+                '".$data[2]."',
+                '".$data[3]."'
             );";
         /* if the field type is int/number, do not put a '' to the values */
 		$this->query($query);
@@ -205,9 +228,33 @@ class PAYROLL extends mysqli
         $this->query($insertSSSLoanData);
 		return "New record has been saved";
     }
+    
+    
 
     public function delete_sss_loan_data(){
         $this->query("DELETE FROM tbl_sss_loans");
+    }
+    
+    /**
+     * added by whyRainbowDoesntHaveBlack
+     */
+    public function insert_sss_condonation_data($data){
+        $insertSSSLoanData = "INSERT INTO tbl_sss_condonation (emp_num,sss_no,charge_amount) VALUES (
+        '".$data[0]."',
+        '".$data[1]."',
+        '".$data[2]."'
+        );"; 
+        // echo $insertSSSLoanData;
+
+        $this->query($insertSSSLoanData);
+		return "New record has been saved";
+    }
+    
+    /**
+     * added by whyRainbowDoesntHaveBlack
+     */
+    public function delete_sss_condonation_data(){
+        $this->query("DELETE FROM tbl_sss_condonation");
     }
 
     public function insert_sss_premium_data($data,$username,$dateToday){
@@ -264,13 +311,14 @@ class PAYROLL extends mysqli
     }
 
     public function insert_salary_report_record($salaryReportData){
-        $insertSalaryReportData = "INSERT INTO tbl_salary_report (employee_no,basic_salary,ecola,ctpa,socio_eco_allow,allowance) VALUES (
+        $insertSalaryReportData = "INSERT INTO tbl_salary_report (employee_no,personal_exemption,basic_salary,ecola,ctpa,socio_eco_allow,allowance) VALUES (
         '".$salaryReportData[0]."',
         '".$salaryReportData[1]."',
         '".$salaryReportData[2]."',
         '".$salaryReportData[3]."',
         '".$salaryReportData[4]."',
-        '".$salaryReportData[5]."'
+        '".$salaryReportData[5]."',
+        '".$salaryReportData[6]."'
         );"; 
         // echo $insertSalaryReportData;
 

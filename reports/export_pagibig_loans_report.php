@@ -73,11 +73,15 @@ function get_payroll_details(){
 
     $return             = $_POST;
     $result             = '';
-    $array_fields       = array('b.employee_no','b.pagibig_loan','b.pagibig_cal_loan');
+    $array_fields       = array('b.employee_no','b.pagibig_loan','b.pagibig_cal_loan', 'b.pagibig_safe_loan');
     $table              = 'tbl_payroll_info a';
     $joins              = 'INNER JOIN tbl_payroll_info_data b ON b.fkid_payroll_info = a.id
                             ';
-    $sql_where          = 'WHERE a.description= '.$salaryType.' AND a.cut_off= '.$selectCutoff.' AND MONTH(a.date_cut_off)= '.$selectMonth.' ';
+    $sql_where          = 'WHERE a.description= '.$salaryType.' AND a.cut_off= '.$selectCutoff.' AND MONTH(a.date_cut_off)= '.$selectMonth.' 
+                            AND YEAR(a.date_cut_off)= '.date('Y').'
+                            ';
+    // AND YEAR(a.date_cut_off)='.date('Y').'
+
     $sql_order          = '';
     $sql_limit          = '';
     $result             = PAYROLL::getInstance()->select_query($array_fields,$table,$joins,$sql_where,$sql_order,$sql_limit);
@@ -88,6 +92,7 @@ function get_payroll_details(){
         $return ['employee_no'][]           = $row ['employee_no'];
         $return ['pagibig_loan'][]          = $row ['pagibig_loan'];
         $return ['pagibig_cal_loan'][]      = $row ['pagibig_cal_loan'];
+        $return ['pagibig_safe_loan'][]     = $row ['pagibig_safe_loan'];
         
         $ctr++;
     }
@@ -203,6 +208,7 @@ $excel->objPHPExcel->setCellValue('F1','SSN');
 $excel->objPHPExcel->setCellValue('G1','TIN');
 $excel->objPHPExcel->setCellValue('H1','Loan Amount');
 $excel->objPHPExcel->setCellValue('I1','Calamity Loan Amount');
+$excel->objPHPExcel->setCellValue('J1','Safe Loan Amount');
 
 
 $excel->objPHPExcel->getColumnDimension('A')->setAutoSize(true);
@@ -214,6 +220,7 @@ $excel->objPHPExcel->getColumnDimension('F')->setAutoSize(true);
 $excel->objPHPExcel->getColumnDimension('G')->setAutoSize(true);
 $excel->objPHPExcel->getColumnDimension('H')->setAutoSize(true);
 $excel->objPHPExcel->getColumnDimension('I')->setAutoSize(true);
+$excel->objPHPExcel->getColumnDimension('J')->setAutoSize(true);
 
 
 $rowCounter = 2;
@@ -232,6 +239,7 @@ $rowCounter = 2;
 					if($get_pd['employee_no'][$x] == $get_eomd['EmpNo'][$i]){
 						$excel->objPHPExcel->setCellValue('H'.$rowCounter,$get_pd['pagibig_loan'][$x]);
 						$excel->objPHPExcel->setCellValue('I'.$rowCounter,$get_pd['pagibig_cal_loan'][$x]);
+						$excel->objPHPExcel->setCellValue('J'.$rowCounter,$get_pd['pagibig_safe_loan'][$x]);
 					}
 				}
 				$rowCounter++;
@@ -239,9 +247,9 @@ $rowCounter = 2;
 		}
 	// }
 	
-	$excel->objPHPExcel->getStyle('A1:I'.$rowCounter)->applyFromArray($arial_font_12);
-	$excel->objPHPExcel->getStyle('A2:I'.$rowCounter)->applyFromArray($hl_center);
-	$excel->objPHPExcel->getStyle('A1:I1')->applyFromArray($hv_center);
+	$excel->objPHPExcel->getStyle('A1:J'.$rowCounter)->applyFromArray($arial_font_12);
+	$excel->objPHPExcel->getStyle('A2:J'.$rowCounter)->applyFromArray($hl_center);
+	$excel->objPHPExcel->getStyle('A1:J1')->applyFromArray($hv_center);
 
 
 /* set file name */

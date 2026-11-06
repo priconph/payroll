@@ -224,6 +224,16 @@
 			$row[] ='Rice Sub.';
 		}else if($aRow['description']==6){
 			$row[] ='VL Conversion';
+		}else if($aRow['description']==7){
+			$row[] ='13th Month';
+		}else if($aRow['description']==8){
+			$row[] ='SL Conversion';
+		}else if($aRow['description']==9){
+			$row[] ='Bonus';
+		}else if($aRow['description']==10){
+			$row[] ='Gratuity Pay';
+		}else{
+			$row[] ='---';
 		}
 
 		if($aRow['cut_off']==1){

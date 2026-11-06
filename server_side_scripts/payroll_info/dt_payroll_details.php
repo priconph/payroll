@@ -3,9 +3,9 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
-    $salary_type    = $_GET['salary_type'];
-    $cutoff         = $_GET['cutoff'];
-    $payroll_data_id         = $_GET['payroll_data_id'];
+    $salary_type        = $_GET['salary_type'];
+    $cutoff             = $_GET['cutoff'];
+    $payroll_data_id    = $_GET['payroll_data_id'];
 
     $aColumns = array( 
                 'id',
@@ -74,8 +74,8 @@
                 'tax_adj',
                 'with_tax',
                 'net_pay',
-                'id_number',
-                'emp_code'
+                'emp_no'
+               
 
                 );
                                 
@@ -85,11 +85,16 @@
     /* DB table to use */
     $sTable = "(
                 select a.id as pi_id, a.description, a.cut_off, a.date_cut_off, a.posted,
-                b.*, c.id_number, c.emp_code from tbl_payroll_info a
+                b.*, c.emp_no from tbl_payroll_info a
                 inner join tbl_payroll_info_data b on b.fkid_payroll_info = a.id
-                inner join tbl_eom c on c.id_number = b.employee_no
+                inner join tbl_account_no c on c.emp_no = b.employee_no
                 ) tbl";
 
+                // Orig 07252024
+                // select a.id as pi_id, a.description, a.cut_off, a.date_cut_off, a.posted,
+                // b.*, c.id_number, c.emp_code from tbl_payroll_info a
+                // inner join tbl_payroll_info_data b on b.fkid_payroll_info = a.id
+                // inner join tbl_eom c on c.id_number = b.employee_no
     $database_config = '../../db_config/config_payroll.php';
     
     if(!file_exists($database_config)){
@@ -309,6 +314,7 @@
         $row[] = number_format($aRow['ph_premium'],2);
         $row[] = $aRow['pagibig'];
         $row[] = number_format($aRow['sss_loan'],2);
+        $row[] = number_format($aRow['sss_cal_loan'],2);
         $row[] = number_format($aRow['sss_cal_loan'],2);
         $row[] = number_format($aRow['pagibig_loan'],2);
         $row[] = number_format($aRow['pagibig_cal_loan'],2);

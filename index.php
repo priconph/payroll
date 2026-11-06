@@ -13,15 +13,11 @@
 	 * allow user to have an access on the page
 	 */
 	$allowedIp = array(
-		'192.168.22.138', // Jannus
-		'192.168.22.103', // Ate Janessa
-		'192.168.22.158', /* 💔Noreen💔 */
-		'192.168.22.38', /* 💔Noreen New💔 */
-		'192.168.23.30', /* 💔Darren💔 */ 
-		'192.168.23.117', // Chan
-		'192.168.23.60', // Migs
-		'192.168.22.200', // Clark
+		'192.168.22.103', // Nessa
+		'192.168.23.210', // Janella
+		'192.168.23.183', // Lina
 		'192.168.22.105', // Chris
+		'192.168.23.252', // da
 	);
 
 	/**
@@ -52,6 +48,7 @@ if( isset($_GET['page']) ){
 
 		default 				: $page_link = 'pages/redirect_page/index.php';
 	}
+
 	$selected_menu = $page;
 	include($page_link);
 }else{

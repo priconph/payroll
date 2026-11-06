@@ -21,7 +21,8 @@
                 'gross_income_ytd',
                 'forecast_earnings',
                 'less_ytd_tax_exempt',
-                'yt_tax_withheld ',
+                'yt_tax_withheld',
+                'leaves_taxes', // 01032026
 				);
 	
 	/* used this field for searching data typed in the search box */
@@ -217,6 +218,7 @@
 		// $row[]	= number_format($aRow['less_ytd_tax_exempt']); // Original code 07-31-2023 -JD saksi si noreen
 		$row[]	= $aRow['less_ytd_tax_exempt'];
 		$row[]	= $aRow['yt_tax_withheld'];
+		$row[]	= $aRow['leaves_taxes'];
         $row[] 	= '<center> <button type="button" class="btn btn-primary fa fa-edit edit-annual-tax-data" id="btn_edit" data-id="'.$aRow['id'].'"> Edit</button>';
 		
 		array_push($output['aaData'],$row);
